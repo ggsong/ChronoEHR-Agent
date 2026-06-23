@@ -1,0 +1,32 @@
+# Python and editor state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Local environments and secrets
+.env
+.venv/
+venv/
+env/
+
+# Controlled or generated data
+data/
+outputs/
+references/
+
+# Large generated artifacts
+*.zip
+*.docx
+*.pptx
+*.pdf
+
+# Local archival notes are useful in the private workspace but not in the public repo.
+docs/*
+!docs/
+!docs/INSTALL.md
+!docs/SYNTHETIC_DEMO.md
+!docs/GITHUB_RELEASE_AUDIT.md
+!docs/RELEASE_STRUCTURE.md

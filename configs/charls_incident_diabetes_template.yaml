@@ -1,0 +1,165 @@
+# ChronoEHR-Agent CHARLS longitudinal chronic-disease extension template.
+# Status: template only; requires local CHARLS wave files.
+
+dataset:
+  name: "charls_incident_diabetes"
+  type: "charls_longitudinal_survey"
+  root_path: "${CHARLS_ROOT}"
+  version: "CHARLS multi-wave"
+  files:
+    wave1_2011: null
+    wave2_2013: null
+    wave3_2015: null
+    wave4_2018: null
+    wave5_2020: null
+    harmonized_charls: null
+    data_dictionary: null
+  id_columns:
+    person_id: null
+    household_id: null
+
+cohort_definition:
+  study_name: "CHARLS incident diabetes prediction from baseline wave"
+  population: "Chinese middle-aged and older adults without diabetes at baseline"
+  baseline_wave: 2011
+  inclusion_criteria:
+    - "participated in 2011 Wave1"
+    - "valid person identifier for cross-wave linkage"
+    - "age >= 45 or study-defined adult aging threshold"
+    - "baseline diabetes status can be determined"
+    - "at least one follow-up wave with diabetes status"
+  exclusion_criteria:
+    - "diabetes present at baseline"
+    - "missing person identifier"
+    - "no follow-up outcome information"
+
+outcome:
+  name: "incident_diabetes"
+  type: "binary"
+  baseline_wave: 2011
+  primary_followup_wave: 2013
+  secondary_followup_wave: 2015
+  definitions:
+    self_report_only:
+      enabled: true
+      description: "doctor-diagnosed diabetes reported in follow-up wave"
+    self_report_or_medication:
+      enabled: true
+      description: "self-report diagnosis or diabetes medication"
+    biomarker_augmented:
+      enabled: false
+      description: "self-report, medication, glucose, or HbA1c if biomarker variables are available"
+
+prediction_times:
+  baseline_wave:
+    name: "2011_baseline"
+    description: "prediction after baseline interview/exam completion"
+    allowed_wave: 2011
+  followup_windows:
+    - name: "2011_to_2013"
+      outcome_wave: 2013
+    - name: "2011_to_2015"
+      outcome_wave: 2015
+    - name: "2011_to_2018"
+      outcome_wave: 2018
+      enabled: false
+
+feature_sets:
+  demographics_baseline:
+    enabled: true
+    allowed_wave: 2011
+    variable_examples:
+      - "age"
+      - "sex"
+      - "education"
+      - "marital_status"
+      - "urban_rural"
+  lifestyle_baseline:
+    enabled: true
+    allowed_wave: 2011
+    variable_examples:
+      - "smoking"
+      - "alcohol"
+      - "physical_activity"
+      - "diet"
+  health_status_baseline:
+    enabled: true
+    allowed_wave: 2011
+    variable_examples:
+      - "BMI"
+      - "self_rated_health"
+      - "hypertension"
+      - "cardiovascular_disease"
+      - "baseline_medication"
+  biomarkers_baseline_optional:
+    enabled: false
+    allowed_wave: 2011
+    variable_examples:
+      - "fasting_glucose"
+      - "HbA1c"
+      - "lipids"
+      - "creatinine"
+      - "blood_pressure"
+  socioeconomic_baseline:
+    enabled: true
+    allowed_wave: 2011
+    variable_examples:
+      - "income_or_wealth_proxy"
+      - "insurance"
+      - "employment_or_retirement"
+
+forbidden_or_high_risk_features:
+  - "any 2013/2015/2018/2020 variable in baseline model"
+  - "follow-up diabetes diagnosis"
+  - "follow-up diabetes medication"
+  - "follow-up glucose or HbA1c"
+  - "death/loss-to-follow-up indicators used as ordinary baseline features"
+
+models:
+  logistic_regression:
+    enabled: true
+    class_weight: "balanced"
+  random_forest:
+    enabled: true
+    class_weight: "balanced_subsample"
+  hist_gradient_boosting:
+    enabled: true
+  xgboost:
+    enabled: false
+  lightgbm:
+    enabled: false
+
+metrics:
+  required:
+    - "event_rate"
+    - "AUROC"
+    - "AUPRC"
+    - "Brier_score"
+    - "calibration"
+  sensitivity:
+    - "self_report_only_vs_biomarker_augmented"
+    - "complete_case_vs_imputed"
+    - "with_vs_without_survey_weights"
+    - "attrition_sensitivity"
+
+split_strategy:
+  method: "person_level_split"
+  group_column: "person_id"
+  train_size: 0.70
+  validation_size: 0.15
+  test_size: 0.15
+  random_seed: 20260620
+  leakage_checks:
+    check_person_overlap: true
+    check_future_wave_features: true
+    check_outcome_proxy_features: true
+
+outputs:
+  readiness_report: "outputs/reports/charls_data_readiness_report.md"
+  cohort_csv: "data/processed/charls_incident_diabetes_cohort.csv"
+  feature_dir: "data/processed/charls_incident_diabetes_features"
+  reports:
+    leakage_audit: "outputs/reports/charls_leakage_audit_report.md"
+    longitudinal_benchmark: "outputs/reports/charls_incident_diabetes_benchmark_report.md"
+    traditional_baselines: "outputs/reports/charls_traditional_baselines_report.md"
+

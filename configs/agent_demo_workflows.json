@@ -1,0 +1,84 @@
+{
+  "default_workflow": "diabetes_v0",
+  "workflows": {
+    "diabetes_v0": {
+      "title": "ChronoEHR-Agent v0.1 diabetes one-click demo",
+      "study_id": "mimic_iv_3_1_diabetes_readmission",
+      "cohort": "diabetes",
+      "boundary": "Local EHR research workflow only; not medical QA, diagnosis, or treatment recommendation.",
+      "description": "A safe, resumable vertical slice for the MIMIC diabetes 30-day readmission demo. It avoids expensive raw-table scans by default and refreshes Agent control artifacts.",
+      "steps": [
+        {
+          "id": "diabetes_safe_pipeline",
+          "module": "Cohort Agent",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --study mimic_iv_3_1_diabetes_readmission --skip-existing --no-expensive",
+          "purpose": "Refresh the diabetes vertical slice without rescanning expensive raw tables."
+        },
+        {
+          "id": "feature_window_validation",
+          "module": "Temporal Feature Agent",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --validate-feature-windows",
+          "purpose": "Validate configured feature time windows and expected outputs."
+        },
+        {
+          "id": "leakage_gate",
+          "module": "Leakage Audit Agent",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --leakage-gate",
+          "purpose": "Audit prediction-time leakage risks before interpreting model results."
+        },
+        {
+          "id": "extractor_window_usage",
+          "module": "Temporal Feature Agent",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --audit-extractor-windows",
+          "purpose": "Check whether feature extractors consume shared window specifications."
+        },
+        {
+          "id": "pipeline_steps",
+          "module": "Study Registry / Runner",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --pipeline-steps",
+          "purpose": "Inspect pipeline completeness and safe rerun commands."
+        },
+        {
+          "id": "study_capabilities",
+          "module": "Study Registry / Runner",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --study-capabilities",
+          "purpose": "Refresh study-level capability status."
+        },
+        {
+          "id": "runbook_state",
+          "module": "Study Registry / Runner",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --agent-runbook-state",
+          "purpose": "Refresh the Agent runbook state machine."
+        },
+        {
+          "id": "agent_next_tasks",
+          "module": "Study Registry / Runner",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --agent-next-tasks",
+          "purpose": "Recommend the next Agent action from current local state."
+        },
+        {
+          "id": "agent_control_status",
+          "module": "Study Registry / Runner",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --agent-control --agent-goal status",
+          "purpose": "Refresh the human-readable Agent control panel."
+        },
+        {
+          "id": "agent_state",
+          "module": "Study Registry / Runner",
+          "risk_level": "safe",
+          "command": "python3 src/chrono_ehr/run_study.py --agent-state",
+          "purpose": "Write the persistent Agent state snapshot."
+        }
+      ]
+    }
+  }
+}

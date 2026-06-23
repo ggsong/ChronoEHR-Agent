@@ -1,0 +1,148 @@
+# ChronoEHR-Agent eICU external ICU benchmark template.
+# Status: template only; requires local eICU raw CSV files.
+
+dataset:
+  name: "eicu_temporal_mortality"
+  type: "eicu_csv"
+  root_path: "${EICU_ROOT}"
+  version: "eICU Collaborative Research Database 2.0"
+  tables:
+    patient: "patient.csv.gz"
+    lab: "lab.csv.gz"
+    vital_periodic: "vitalPeriodic.csv.gz"
+    apache_patient_result: "apachePatientResult.csv.gz"
+    diagnosis: "diagnosis.csv.gz"
+    medication: "medication.csv.gz"
+    treatment: "treatment.csv.gz"
+    infusion_drug: "infusionDrug.csv.gz"
+    nurse_charting: "nurseCharting.csv.gz"
+  id_columns:
+    patient_id: "uniquepid"
+    stay_id: "patientunitstayid"
+
+cohort_definition:
+  study_name: "eICU first-24h ICU mortality external benchmark"
+  population: "adult ICU stays with valid hospital mortality outcome"
+  inclusion_criteria:
+    - "adult ICU stay"
+    - "valid patientunitstayid"
+    - "valid hospital or ICU discharge status"
+    - "valid ICU admission offset"
+  exclusion_criteria:
+    - "missing mortality label"
+    - "invalid or implausible ICU stay duration"
+    - "missing prediction-time anchor"
+
+outcome:
+  name: "hospital_mortality"
+  type: "binary"
+  label_positive: "hospital discharge status indicates death"
+  label_negative: "hospital discharge status indicates alive"
+  source_table: "patient"
+  candidate_columns:
+    - "hospitaldischargestatus"
+    - "unitdischargestatus"
+  secondary_outcomes:
+    - "icu_mortality"
+    - "prolonged_icu_los"
+
+prediction_times:
+  admission:
+    name: "icu_admission"
+    description: "use only ICU admission-time or pre-admission available fields"
+    allowed_offset_minutes: 0
+  first_24h:
+    name: "icu_first_24h"
+    description: "use events from ICU admission through first 24 hours"
+    allowed_offset_minutes: 1440
+  full_stay_reference:
+    name: "full_stay_reference"
+    description: "uses complete in-stay records before discharge; reference only, not early prediction"
+    allowed_offset: "at_or_before_discharge_offset"
+
+feature_sets:
+  admission_baseline:
+    enabled: true
+    variables:
+      - "age"
+      - "sex"
+      - "ethnicity"
+      - "admission_source"
+      - "unit_type"
+      - "baseline_severity_if_available_at_admission"
+  first_24h_vitals_labs:
+    enabled: true
+    windows_hours: [24]
+    aggregations: ["first", "last", "min", "max", "mean", "count", "has"]
+    source_tables:
+      - "lab"
+      - "vitalPeriodic"
+  first_24h_treatments_optional:
+    enabled: false
+    source_tables:
+      - "medication"
+      - "treatment"
+      - "infusionDrug"
+      - "nurseCharting"
+  full_stay_naive_reference:
+    enabled: true
+    warning: "not an early prediction model; use only for leakage/window sensitivity"
+
+forbidden_or_high_risk_features:
+  - "hospitaldischargestatus"
+  - "unitdischargestatus"
+  - "hospitaldischargeoffset"
+  - "unitdischargeoffset"
+  - "actualicumortality"
+  - "actualhospitalmortality"
+  - "apache mortality prediction targets if used as labels"
+  - "events after prediction offset"
+
+models:
+  logistic_regression:
+    enabled: true
+    class_weight: "balanced"
+  random_forest:
+    enabled: true
+    class_weight: "balanced_subsample"
+  hist_gradient_boosting:
+    enabled: true
+  xgboost:
+    enabled: false
+    note: "optional dependency not installed in current environment"
+  lightgbm:
+    enabled: false
+    note: "optional dependency not installed in current environment"
+
+metrics:
+  required:
+    - "event_rate"
+    - "AUROC"
+    - "AUPRC"
+    - "Brier_score"
+    - "calibration"
+  fixed_alert_burden:
+    enabled: true
+    top_percent: [5, 10, 20]
+
+split_strategy:
+  method: "patient_level_split"
+  group_column: "uniquepid"
+  train_size: 0.70
+  validation_size: 0.15
+  test_size: 0.15
+  random_seed: 20260620
+  leakage_checks:
+    check_patient_overlap: true
+    check_future_offset_features: true
+    check_outcome_proxy_features: true
+
+outputs:
+  readiness_report: "outputs/reports/eicu_data_readiness_report.md"
+  cohort_csv: "data/processed/eicu_temporal_mortality_cohort.csv"
+  feature_dir: "data/processed/eicu_temporal_features"
+  reports:
+    leakage_audit: "outputs/reports/eicu_leakage_audit_report.md"
+    temporal_benchmark: "outputs/reports/eicu_temporal_benchmark_report.md"
+    traditional_baselines: "outputs/reports/eicu_traditional_baselines_report.md"
+

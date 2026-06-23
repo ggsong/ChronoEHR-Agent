@@ -1,0 +1,189 @@
+# ChronoEHR-Agent concrete demo config
+# Demo: MIMIC-IV diabetes 30-day hospital readmission prediction.
+
+dataset:
+  name: "mimic_iv_3_1_diabetes_readmission"
+  type: "mimic_iv_csv_gz"
+  root_path: "${MIMIC_IV_ROOT}"
+  version: "MIMIC-IV 3.1"
+  tables:
+    patients: "hosp/patients.csv.gz"
+    admissions: "hosp/admissions.csv.gz"
+    diagnoses_icd: "hosp/diagnoses_icd.csv.gz"
+    d_icd_diagnoses: "hosp/d_icd_diagnoses.csv.gz"
+    prescriptions: "hosp/prescriptions.csv.gz"
+    labevents: "hosp/labevents.csv.gz"
+  id_columns:
+    patient_id: "subject_id"
+    admission_id: "hadm_id"
+
+cohort_definition:
+  study_name: "Diabetes 30-day readmission prediction in MIMIC-IV"
+  population: "adult hospital admissions with diabetes diagnosis codes"
+  diabetes_code_rules:
+    icd9_prefixes:
+      - "250"
+    icd10_prefixes:
+      - "E08"
+      - "E09"
+      - "E10"
+      - "E11"
+      - "E12"
+      - "E13"
+  inclusion_criteria:
+    - "anchor_age >= 18"
+    - "current hospital admission has ICD-9 250* or ICD-10 E08-E13 diabetes diagnosis"
+    - "valid admission time and discharge time"
+  exclusion_criteria:
+    - "in-hospital death during index admission"
+    - "missing patient_id or admission_id"
+    - "post-discharge death within 30 days without readmission, flagged for exclusion in the demo script"
+
+outcome:
+  name: "readmission_30d"
+  type: "binary"
+  prediction_time: "discharge_time"
+  definition: "next hospital admission for the same subject within 30 days after index discharge"
+  followup_window_days: 30
+  label_positive: "readmitted within 30 days"
+  label_negative: "not readmitted within 30 days"
+  note: "First demo counts all next admissions. Later versions can restrict to unplanned readmissions."
+
+prediction_times:
+  primary:
+    name: "discharge_time_prediction"
+    description: "predict 30-day readmission at discharge using variables available by discharge"
+    time_column: "dischtime"
+  future_extension:
+    - name: "admission_time_prediction"
+      description: "requires diabetes status known before or at admission, not only current discharge diagnosis"
+      time_column: "admittime"
+    - name: "inhospital_24h_prediction"
+      description: "uses only first 24h features after admission"
+      time_column: "admittime_plus_24h"
+
+feature_sets:
+  discharge_safe_v0:
+    enabled: true
+    description: "simple features available by discharge"
+    variables:
+      - "anchor_age"
+      - "gender"
+      - "admission_type"
+      - "admission_location"
+      - "insurance"
+      - "language"
+      - "marital_status"
+      - "race"
+      - "ed_los_hours"
+      - "length_of_stay_days"
+      - "prior_admissions_count"
+      - "days_since_prior_discharge"
+  admission_safe_v0:
+    enabled: false
+    description: "future extension; cannot use current discharge diagnosis as a feature"
+    variables:
+      - "anchor_age"
+      - "gender"
+      - "admission_type"
+      - "admission_location"
+      - "insurance"
+      - "language"
+      - "marital_status"
+      - "race"
+      - "prior_admissions_count"
+      - "days_since_prior_discharge"
+  forbidden_or_high_risk:
+    variables:
+      - "readmission_30d"
+      - "next_admittime"
+      - "next_hadm_id"
+      - "days_to_next_admission"
+      - "deathtime"
+      - "dod"
+      - "hospital_expire_flag"
+      - "discharge_location"
+      - "future_labs_after_discharge"
+      - "followup_events_within_30d"
+
+models:
+  logistic_regression:
+    enabled: true
+    note: "requires scikit-learn; cohort script runs before modeling"
+  random_forest:
+    enabled: true
+    note: "requires scikit-learn"
+  xgboost:
+    enabled: false
+    note: "optional after baseline pipeline is stable"
+
+metrics:
+  required:
+    - "event_rate"
+    - "AUROC"
+    - "AUPRC"
+    - "sensitivity"
+    - "specificity"
+    - "PPV"
+    - "NPV"
+    - "Brier_score"
+  note: "Do not report AUROC alone because readmission is often class-imbalanced."
+
+split_strategy:
+  method: "patient_level_hash_split"
+  group_column: "subject_id"
+  train_size: 0.70
+  validation_size: 0.15
+  test_size: 0.15
+  random_seed: 20260619
+  leakage_checks:
+    check_patient_overlap: true
+    check_outcome_proxy_features: true
+    check_future_followup_features: true
+
+outputs:
+  cohort_csv: "data/processed/mimic_diabetes_readmission_cohort.csv"
+  tables:
+    cohort_summary: "outputs/tables/mimic_diabetes_cohort_summary.csv"
+    split_summary: "outputs/tables/mimic_diabetes_split_summary.csv"
+    missingness: "outputs/tables/mimic_diabetes_feature_missingness.csv"
+  reports:
+    leakage_audit: "outputs/reports/mimic_diabetes_leakage_audit_report.md"
+    run_summary: "outputs/reports/mimic_diabetes_run_summary.md"
+    logistic_baseline: "outputs/reports/mimic_diabetes_logistic_baseline_report.md"
+    lab_features: "outputs/reports/mimic_diabetes_lab_feature_report.md"
+    lab24h_features: "outputs/reports/mimic_diabetes_lab24h_feature_report.md"
+    med_features: "outputs/reports/mimic_diabetes_med_feature_report.md"
+    med24h_features: "outputs/reports/mimic_diabetes_med24h_feature_report.md"
+    figures: "outputs/reports/mimic_diabetes_figure_report.md"
+    feature_time_audit: "outputs/reports/mimic_diabetes_feature_time_audit_report.md"
+    prediction_time_comparison: "outputs/reports/mimic_diabetes_prediction_time_comparison_report.md"
+    prediction_time_model_comparison: "outputs/reports/mimic_diabetes_prediction_time_model_report.md"
+    prediction_time_figures: "outputs/reports/mimic_diabetes_prediction_time_figure_report.md"
+    comprehensive_audit: "outputs/reports/mimic_diabetes_comprehensive_audit_report.md"
+    methods_results_draft: "outputs/reports/mimic_diabetes_methods_results_draft.md"
+    study_package: "outputs/reports/study_package.md"
+    study_inspection: "outputs/reports/study_inspection.md"
+    study_registry_validation: "outputs/reports/study_registry_validation_report.md"
+    model_performance: "outputs/tables/mimic_diabetes_model_performance.csv"
+    logistic_coefficients: "outputs/tables/mimic_diabetes_logistic_coefficients.csv"
+    lab_feature_availability: "outputs/tables/mimic_diabetes_lab_feature_availability.csv"
+    lab24h_feature_availability: "outputs/tables/mimic_diabetes_lab24h_feature_availability.csv"
+    med_feature_availability: "outputs/tables/mimic_diabetes_med_feature_availability.csv"
+    med24h_feature_availability: "outputs/tables/mimic_diabetes_med24h_feature_availability.csv"
+    feature_time_audit_table: "outputs/tables/mimic_diabetes_feature_time_audit.csv"
+    prediction_time_comparison_table: "outputs/tables/mimic_diabetes_prediction_time_comparison.csv"
+    prediction_time_model_performance: "outputs/tables/mimic_diabetes_prediction_time_model_performance.csv"
+    prediction_time_logistic_coefficients: "outputs/tables/mimic_diabetes_prediction_time_logistic_coefficients.csv"
+    prediction_time_test_predictions: "outputs/tables/mimic_diabetes_prediction_time_test_predictions.csv"
+    test_predictions: "outputs/tables/mimic_diabetes_test_predictions.csv"
+    calibration_deciles: "outputs/tables/mimic_diabetes_calibration_deciles.csv"
+  machine_readable:
+    pipeline_manifest: "outputs/pipeline_manifest.json"
+    study_package: "outputs/study_package.json"
+  figures:
+    roc_curve: "outputs/figures/mimic_diabetes_roc_curve.png"
+    precision_recall_curve: "outputs/figures/mimic_diabetes_precision_recall_curve.png"
+    calibration_deciles: "outputs/figures/mimic_diabetes_calibration_deciles.png"
+    prediction_time_auroc: "outputs/figures/mimic_diabetes_prediction_time_auroc.png"
+    prediction_time_auprc: "outputs/figures/mimic_diabetes_prediction_time_auprc.png"

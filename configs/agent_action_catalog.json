@@ -1,0 +1,852 @@
+{
+  "version": "0.1",
+  "boundary": "Local EHR research workflow actions only; no medical QA, diagnosis, or treatment recommendation.",
+  "risk_levels": {
+    "safe": "Reads configs or existing outputs, validates metadata, or performs lightweight audits.",
+    "expensive": "May scan large raw tables or refresh feature extraction.",
+    "model": "May train or recalibrate models.",
+    "report": "Produces manuscript/report artifacts; lower priority while polishing the Agent itself."
+  },
+  "actions": [
+    {
+      "id": "study_capability_audit",
+      "goal_types": ["status", "demo"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --study-capabilities",
+      "description": "Check which study-level capabilities are complete, missing, or data-pending."
+    },
+    {
+      "id": "pipeline_step_introspection",
+      "goal_types": ["status", "demo"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --pipeline-steps",
+      "description": "Inspect registered pipeline steps and declared output completeness without running heavy analysis."
+    },
+    {
+      "id": "agent_control_status",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-control --agent-goal status",
+      "description": "Build the current Agent control panel in status mode."
+    },
+    {
+      "id": "agent_state",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-state",
+      "description": "Refresh the persistent Agent state before validating recovery memory."
+    },
+    {
+      "id": "agent_state_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-state",
+      "description": "Validate persistent Agent state and catch stale boundary notes."
+    },
+    {
+      "id": "agent_control_routing_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-control",
+      "description": "Validate natural-language goal routing for the local control panel."
+    },
+    {
+      "id": "agent_command_lint",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-command-lint",
+      "description": "Lint Agent command strings and run_study flags across configs and state outputs."
+    },
+    {
+      "id": "agent_doctor",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-doctor",
+      "description": "Run the final local Agent health bundle after code/config edits."
+    },
+    {
+      "id": "agent_status_card",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-status-card",
+      "description": "Generate a short human-readable status card from current Agent outputs."
+    },
+    {
+      "id": "agent_progress_score",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-progress-score",
+      "description": "Compute a concise local MVP progress score for ChronoEHR-Agent."
+    },
+    {
+      "id": "agent_progress_score_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-progress-score",
+      "description": "Validate the generated Agent progress score."
+    },
+    {
+      "id": "agent_status_card_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-status-card",
+      "description": "Validate the generated Agent status card."
+    },
+    {
+      "id": "agent_task_execution_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-task-execution",
+      "description": "Validate the latest natural-language Agent task execution and post-run refresh outputs."
+    },
+    {
+      "id": "agent_task_scenarios",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-task-scenarios",
+      "description": "Export the natural-language Agent task scenario library."
+    },
+    {
+      "id": "agent_task_scenario_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-task-scenarios",
+      "description": "Validate the natural-language Agent task scenario library."
+    },
+    {
+      "id": "agent_task_queue",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-task-queue",
+      "description": "Build a safety-aware queue from Agent next-task recommendations."
+    },
+    {
+      "id": "agent_task_queue_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-task-queue",
+      "description": "Validate the safety-aware Agent task queue."
+    },
+    {
+      "id": "agent_task_queue_run",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-task-queue-run",
+      "description": "Dry-run the Agent task queue execution plan."
+    },
+    {
+      "id": "agent_task_queue_execution_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-task-queue-execution",
+      "description": "Validate Agent task queue execution boundaries."
+    },
+    {
+      "id": "agent_cooldown_fingerprint_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-cooldown-fingerprint",
+      "description": "Validate Agent safe-auto cooldown fingerprint configuration."
+    },
+    {
+      "id": "agent_doctor_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-doctor",
+      "description": "Validate the Agent doctor step list and most recent output."
+    },
+    {
+      "id": "agent_entrypoints_validation",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-agent-entrypoints",
+      "description": "Validate stable Agent entrypoint config, commands, and generated outputs."
+    },
+    {
+      "id": "agent_control_consistency",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-control-consistency",
+      "description": "Audit consistency across Agent entrypoints, action catalog, self-checks, and readiness gates."
+    },
+    {
+      "id": "agent_dependency_audit",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-dependency-audit",
+      "description": "Audit Agent control-layer dependencies to prevent circular gates."
+    },
+    {
+      "id": "agent_doc_command_audit",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-doc-command-audit",
+      "description": "Audit documented run_study commands in README and quickstart docs."
+    },
+    {
+      "id": "agent_handoff_checklist",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-handoff-checklist",
+      "description": "Validate the files and commands needed to resume ChronoEHR-Agent work."
+    },
+    {
+      "id": "agent_boundary_audit",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-boundary-audit",
+      "description": "Audit project wording against medical-QA and clinical-advice drift."
+    },
+    {
+      "id": "agent_artifact_freshness",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --agent-artifact-freshness",
+      "description": "Audit whether core Agent control outputs are fresh relative to scripts/configs/state."
+    },
+    {
+      "id": "feature_window_validation",
+      "goal_types": ["status", "leakage", "demo"],
+      "module": "Temporal Feature Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-feature-windows",
+      "description": "Validate configured feature extraction windows and expected output files."
+    },
+    {
+      "id": "prediction_time_leakage_gate",
+      "goal_types": ["status", "leakage", "demo"],
+      "module": "Leakage Audit Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --leakage-gate",
+      "description": "Run the prediction-time leakage gate and produce action items."
+    },
+    {
+      "id": "extractor_window_usage_audit",
+      "goal_types": ["leakage"],
+      "module": "Temporal Feature Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --audit-extractor-windows",
+      "description": "Check which extractors consume shared feature-window specs."
+    },
+    {
+      "id": "external_readiness_summary",
+      "goal_types": ["external", "status"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-readiness-summary",
+      "description": "Summarize CDSL, eICU, and CHARLS readiness."
+    },
+    {
+      "id": "external_benchmark_summary",
+      "goal_types": ["external", "status"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-benchmark-summary",
+      "description": "Build a concise CDSL/eICU external benchmark summary table from completed outputs."
+    },
+    {
+      "id": "validate_external_benchmark_summary",
+      "goal_types": ["external", "status"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-benchmark-summary",
+      "description": "Validate the CDSL/eICU external benchmark summary table and boundary notes."
+    },
+    {
+      "id": "external_technical_summary",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-technical-summary",
+      "description": "Build an external technical summary from hard metrics, subgroup CI, calibration, and decision curves."
+    },
+    {
+      "id": "validate_external_technical_summary",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-technical-summary",
+      "description": "Validate the external technical summary artifact."
+    },
+    {
+      "id": "external_calibration_decision_summary",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-calibration-decision-summary",
+      "description": "Build a unified external calibration and decision-curve comparison table."
+    },
+    {
+      "id": "validate_external_calibration_decision_summary",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-calibration-decision-summary",
+      "description": "Validate the unified external calibration and decision-curve comparison table."
+    },
+    {
+      "id": "external_model_selection_rationale",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-model-selection-rationale",
+      "description": "Build a deterministic model-selection rationale table for external benchmark summary rows."
+    },
+    {
+      "id": "validate_external_model_selection_rationale",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-model-selection-rationale",
+      "description": "Validate the external model-selection rationale table."
+    },
+    {
+      "id": "external_metric_consistency_audit",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-metric-consistency-audit",
+      "description": "Audit metric consistency across external summary, CI, calibration, and rationale tables."
+    },
+    {
+      "id": "validate_external_metric_consistency_audit",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-metric-consistency-audit",
+      "description": "Validate the external metric consistency audit."
+    },
+    {
+      "id": "external_summary_asset_manifest",
+      "goal_types": ["external", "status", "report"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-summary-asset-manifest",
+      "description": "Build the formal external-summary asset manifest for mentor handoff."
+    },
+    {
+      "id": "validate_external_summary_asset_manifest",
+      "goal_types": ["external", "status", "report"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-summary-asset-manifest",
+      "description": "Validate the formal external-summary asset manifest."
+    },
+    {
+      "id": "external_handoff_package",
+      "goal_types": ["external", "status", "report"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-handoff-package",
+      "description": "Build the concrete external handoff package directory and zip archive."
+    },
+    {
+      "id": "validate_external_handoff_package",
+      "goal_types": ["external", "status", "report"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-handoff-package",
+      "description": "Validate the concrete external handoff package directory and zip archive."
+    },
+    {
+      "id": "external_subgroup_robustness_summary",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-subgroup-robustness-summary",
+      "description": "Build a subgroup robustness summary for selected external benchmark rows."
+    },
+    {
+      "id": "validate_external_subgroup_robustness_summary",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-subgroup-robustness-summary",
+      "description": "Validate the selected-row external subgroup robustness summary."
+    },
+    {
+      "id": "external_threshold_band_sensitivity",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-threshold-band-sensitivity",
+      "description": "Build threshold-band sensitivity summaries for selected external decision curves."
+    },
+    {
+      "id": "validate_external_threshold_band_sensitivity",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-threshold-band-sensitivity",
+      "description": "Validate threshold-band sensitivity summaries for selected external decision curves."
+    },
+    {
+      "id": "external_calibration_method_rationale",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-calibration-method-rationale",
+      "description": "Build calibration-method rationale rows for selected external benchmark rows."
+    },
+    {
+      "id": "validate_external_calibration_method_rationale",
+      "goal_types": ["external", "status", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-calibration-method-rationale",
+      "description": "Validate calibration-method rationale rows for selected external benchmark rows."
+    },
+    {
+      "id": "external_bootstrap_ci",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-bootstrap-ci",
+      "description": "Bootstrap test-set confidence intervals for CDSL, eICU, and CHARLS external benchmark predictions."
+    },
+    {
+      "id": "validate_external_bootstrap_ci",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-bootstrap-ci",
+      "description": "Validate external benchmark bootstrap confidence interval outputs."
+    },
+    {
+      "id": "cdsl_calibration_decision",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --cdsl-calibration-decision",
+      "description": "Summarize CDSL calibration and decision-curve outputs from traditional baseline predictions."
+    },
+    {
+      "id": "validate_cdsl_calibration_decision",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-cdsl-calibration-decision",
+      "description": "Validate CDSL calibration and decision-curve outputs."
+    },
+    {
+      "id": "external_subgroup_performance",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-subgroup-performance",
+      "description": "Summarize CDSL, eICU, and CHARLS external subgroup performance."
+    },
+    {
+      "id": "validate_external_subgroup_performance",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-subgroup-performance",
+      "description": "Validate external subgroup performance outputs."
+    },
+    {
+      "id": "external_subgroup_bootstrap_ci",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-subgroup-bootstrap-ci",
+      "description": "Bootstrap confidence intervals for CDSL, eICU, and CHARLS external subgroup performance."
+    },
+    {
+      "id": "validate_external_subgroup_bootstrap_ci",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-subgroup-bootstrap-ci",
+      "description": "Validate external subgroup bootstrap confidence interval outputs."
+    },
+    {
+      "id": "external_model_comparison_recalibration",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --external-model-comparison-recalibration",
+      "description": "Recalibrate eICU/CHARLS RF and HGB model-comparison probabilities."
+    },
+    {
+      "id": "validate_external_model_comparison_recalibration",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-external-model-comparison-recalibration",
+      "description": "Validate eICU/CHARLS RF and HGB model-comparison recalibration outputs."
+    },
+    {
+      "id": "next_study_plan",
+      "goal_types": ["external", "status"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --next-study-plan",
+      "description": "Generate a local action plan for next study steps from current readiness state."
+    },
+    {
+      "id": "validate_next_study_plan",
+      "goal_types": ["external", "status"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-next-study-plan",
+      "description": "Validate next-study plan commands and stale external-data wording."
+    },
+    {
+      "id": "eicu_readiness",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-readiness",
+      "description": "Audit local eICU raw-data readiness before writing cohort/model code."
+    },
+    {
+      "id": "eicu_cohort",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-cohort",
+      "description": "Build the eICU first-24h hospital mortality cohort skeleton without training models."
+    },
+    {
+      "id": "validate_eicu_cohort",
+      "goal_types": ["external", "leakage"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-eicu-cohort",
+      "description": "Validate eICU cohort labels, time anchors, first-24h eligibility, and patient-level split overlap."
+    },
+    {
+      "id": "validate_eicu_temporal_features",
+      "goal_types": ["external", "leakage"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-eicu-temporal-features",
+      "description": "Validate eICU first-24h lab/vital feature timing and file completeness."
+    },
+    {
+      "id": "eicu_leakage_gate",
+      "goal_types": ["external", "leakage"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-leakage-gate",
+      "description": "Run the eICU first-24h leakage gate for future-information and outcome-proxy checks."
+    },
+    {
+      "id": "eicu_temporal_features",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "expensive",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-temporal-features",
+      "description": "Extract eICU first-24h lab/vital feature skeletons; scans large eICU event tables."
+    },
+    {
+      "id": "validate_eicu_logistic_baseline",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-eicu-logistic-baseline",
+      "description": "Validate eICU first-24h logistic baseline metrics and predictions."
+    },
+    {
+      "id": "eicu_logistic_baseline",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-logistic-baseline",
+      "description": "Run a lightweight eICU first-24h balanced logistic regression baseline."
+    },
+    {
+      "id": "eicu_model_comparison",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-model-comparison",
+      "description": "Run eICU first-24h traditional model comparisons."
+    },
+    {
+      "id": "validate_eicu_model_comparison",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-eicu-model-comparison",
+      "description": "Validate eICU first-24h model-comparison outputs."
+    },
+    {
+      "id": "eicu_baseline_figures",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-baseline-figures",
+      "description": "Generate eICU ROC, precision-recall, and calibration figures from existing baseline predictions."
+    },
+    {
+      "id": "validate_eicu_baseline_figures",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-eicu-baseline-figures",
+      "description": "Validate eICU baseline figures, calibration deciles, and calibration summary."
+    },
+    {
+      "id": "eicu_probability_recalibration",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --eicu-probability-recalibration",
+      "description": "Recalibrate eICU first-24h baseline probabilities on the validation split."
+    },
+    {
+      "id": "validate_eicu_probability_recalibration",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-eicu-probability-recalibration",
+      "description": "Validate eICU first-24h probability recalibration outputs."
+    },
+    {
+      "id": "charls_readiness",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-readiness",
+      "description": "Audit local CHARLS wave-data readiness before building longitudinal tasks."
+    },
+    {
+      "id": "charls_wave_map",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-wave-map",
+      "description": "Build the concrete CHARLS harmonized wave-variable map for incident diabetes."
+    },
+    {
+      "id": "validate_charls_wave_map",
+      "goal_types": ["external", "leakage"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-wave-map",
+      "description": "Validate CHARLS wave-variable mapping and leakage roles."
+    },
+    {
+      "id": "charls_incident_diabetes_cohort",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-incident-diabetes-cohort",
+      "description": "Build the CHARLS 2011 baseline to 2013/2015 incident diabetes cohort skeleton."
+    },
+    {
+      "id": "validate_charls_incident_diabetes_cohort",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-incident-diabetes-cohort",
+      "description": "Validate the CHARLS incident diabetes cohort skeleton."
+    },
+    {
+      "id": "charls_baseline_features",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-baseline-features",
+      "description": "Build the CHARLS 2011 baseline feature matrix for incident diabetes."
+    },
+    {
+      "id": "validate_charls_baseline_features",
+      "goal_types": ["external"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-baseline-features",
+      "description": "Validate the CHARLS 2011 baseline feature matrix."
+    },
+    {
+      "id": "charls_leakage_gate",
+      "goal_types": ["external", "leakage"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-leakage-gate",
+      "description": "Block CHARLS baseline features if follow-up or outcome information leaks in."
+    },
+    {
+      "id": "charls_logistic_baseline",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-logistic-baseline",
+      "description": "Run a lightweight CHARLS incident diabetes balanced logistic regression baseline."
+    },
+    {
+      "id": "validate_charls_logistic_baseline",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-logistic-baseline",
+      "description": "Validate CHARLS incident diabetes logistic baseline outputs."
+    },
+    {
+      "id": "charls_sensitivity",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-sensitivity",
+      "description": "Run CHARLS incident diabetes baseline sensitivity analyses."
+    },
+    {
+      "id": "validate_charls_sensitivity",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-sensitivity",
+      "description": "Validate CHARLS incident diabetes sensitivity outputs."
+    },
+    {
+      "id": "charls_model_comparison",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-model-comparison",
+      "description": "Run CHARLS incident diabetes traditional model comparisons."
+    },
+    {
+      "id": "validate_charls_model_comparison",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-model-comparison",
+      "description": "Validate CHARLS incident diabetes model-comparison outputs."
+    },
+    {
+      "id": "charls_calibration_decision",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-calibration-decision",
+      "description": "Summarize CHARLS incident diabetes calibration and decision-curve outputs from existing baseline predictions."
+    },
+    {
+      "id": "validate_charls_calibration_decision",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-calibration-decision",
+      "description": "Validate CHARLS incident diabetes calibration and decision-curve outputs."
+    },
+    {
+      "id": "charls_probability_recalibration",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --charls-probability-recalibration",
+      "description": "Recalibrate CHARLS incident diabetes baseline probabilities on the validation split."
+    },
+    {
+      "id": "validate_charls_probability_recalibration",
+      "goal_types": ["external", "model"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --validate-charls-probability-recalibration",
+      "description": "Validate CHARLS incident diabetes probability recalibration outputs."
+    },
+    {
+      "id": "cdsl_leakage_audit",
+      "goal_types": ["external", "leakage"],
+      "module": "External Benchmark Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --cdsl-leakage-audit",
+      "description": "Audit leakage risks in the CDSL temporal benchmark."
+    },
+    {
+      "id": "delivery_readiness",
+      "goal_types": ["status"],
+      "module": "Study Registry / Runner",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --delivery-readiness",
+      "description": "Run the overall local delivery readiness audit."
+    },
+    {
+      "id": "diabetes_safe_rerun",
+      "goal_types": ["demo"],
+      "module": "Cohort Agent",
+      "risk_level": "safe",
+      "command": "python3 src/chrono_ehr/run_study.py --study mimic_iv_3_1_diabetes_readmission --skip-existing --no-expensive",
+      "description": "Refresh the diabetes vertical slice while skipping existing and expensive steps."
+    },
+    {
+      "id": "shared_vital_features",
+      "goal_types": ["demo"],
+      "module": "Temporal Feature Agent",
+      "risk_level": "expensive",
+      "command": "python3 src/chrono_ehr/run_study.py --vital-features",
+      "description": "Extract shared ICU vital-sign features; may scan large event tables."
+    },
+    {
+      "id": "shared_procedure_features",
+      "goal_types": ["demo"],
+      "module": "Temporal Feature Agent",
+      "risk_level": "expensive",
+      "command": "python3 src/chrono_ehr/run_study.py --procedure-features",
+      "description": "Extract shared ICU procedure-event features."
+    },
+    {
+      "id": "shared_medication_features",
+      "goal_types": ["demo"],
+      "module": "Temporal Feature Agent",
+      "risk_level": "expensive",
+      "command": "python3 src/chrono_ehr/run_study.py --general-med-features",
+      "description": "Extract shared medication features."
+    },
+    {
+      "id": "random_forest_baseline",
+      "goal_types": ["model", "demo"],
+      "module": "Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --random-forest-baseline",
+      "description": "Run optional Random Forest baselines."
+    },
+    {
+      "id": "gradient_boosting_baseline",
+      "goal_types": ["model", "demo"],
+      "module": "Benchmark Agent",
+      "risk_level": "model",
+      "command": "python3 src/chrono_ehr/run_study.py --gradient-boosting-baseline",
+      "description": "Run optional HistGradientBoosting baselines."
+    },
+    {
+      "id": "english_brief_docx",
+      "goal_types": ["report"],
+      "module": "Report Agent",
+      "risk_level": "report",
+      "command": "python3 src/chrono_ehr/run_study.py --english-brief-docx",
+      "description": "Export the English brief DOCX review draft."
+    }
+  ]
+}

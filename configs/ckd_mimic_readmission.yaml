@@ -1,0 +1,195 @@
+# ChronoEHR-Agent planned study config
+# Planned demo: MIMIC-IV CKD 30-day hospital readmission prediction.
+
+dataset:
+  name: "mimic_iv_3_1_ckd_readmission"
+  type: "mimic_iv_csv_gz"
+  root_path: "${MIMIC_IV_ROOT}"
+  version: "MIMIC-IV 3.1"
+  tables:
+    patients: "hosp/patients.csv.gz"
+    admissions: "hosp/admissions.csv.gz"
+    diagnoses_icd: "hosp/diagnoses_icd.csv.gz"
+    d_icd_diagnoses: "hosp/d_icd_diagnoses.csv.gz"
+    labevents: "hosp/labevents.csv.gz"
+    prescriptions: "hosp/prescriptions.csv.gz"
+  id_columns:
+    patient_id: "subject_id"
+    admission_id: "hadm_id"
+
+cohort_definition:
+  study_name: "CKD 30-day readmission prediction in MIMIC-IV"
+  population: "adult hospital admissions with chronic kidney disease diagnosis codes"
+  ckd_code_rules:
+    icd9_prefixes:
+      - "585"
+    icd10_prefixes:
+      - "N18"
+  inclusion_criteria:
+    - "anchor_age >= 18"
+    - "current or prior hospital admission has ICD-9 585* or ICD-10 N18* CKD diagnosis"
+    - "valid admission time and discharge time"
+  exclusion_criteria:
+    - "in-hospital death during index admission"
+    - "missing patient_id or admission_id"
+    - "post-discharge death within 30 days without readmission, flagged for sensitivity analysis"
+  notes:
+    - "First CKD version should compare current-admission CKD diagnosis vs prior-known CKD status."
+    - "Admission-time prediction should not rely on discharge-coded CKD unless CKD was known before admission."
+
+outcome:
+  name: "readmission_30d"
+  type: "binary"
+  prediction_time: "discharge_time"
+  definition: "next hospital admission for the same subject within 30 days after index discharge"
+  followup_window_days: 30
+  label_positive: "readmitted within 30 days"
+  label_negative: "not readmitted within 30 days"
+  note: "First version counts all-cause readmission; later sensitivity can restrict to emergency/urgent or non-elective readmission."
+
+prediction_times:
+  primary:
+    name: "discharge_time_prediction"
+    description: "predict 30-day readmission at discharge using variables available by discharge"
+    time_column: "dischtime"
+  planned:
+    - name: "admission_time_prediction"
+      description: "uses variables known at or before admission; CKD status should be prior-known or admission-problem-list equivalent"
+      time_column: "admittime"
+    - name: "inhospital_24h_prediction"
+      description: "uses only first 24h labs and medications after admission"
+      time_column: "admittime_plus_24h"
+
+feature_sets:
+  admission_safe_v0:
+    enabled: true
+    description: "simple variables available at admission or before admission"
+    variables:
+      - "anchor_age"
+      - "gender"
+      - "admission_type"
+      - "admission_location"
+      - "insurance"
+      - "language"
+      - "marital_status"
+      - "race"
+      - "prior_admissions_count"
+      - "days_since_prior_discharge"
+      - "prior_ckd_diagnosis"
+  inhospital_24h_v0:
+    enabled: true
+    description: "admission-safe variables plus first-24h kidney-related labs"
+    variables:
+      - "anchor_age"
+      - "gender"
+      - "admission_type"
+      - "admission_location"
+      - "prior_admissions_count"
+      - "days_since_prior_discharge"
+      - "creatinine_24h"
+      - "bun_24h"
+      - "potassium_24h"
+      - "sodium_24h"
+      - "bicarbonate_24h"
+      - "hemoglobin_24h"
+  discharge_safe_v0:
+    enabled: true
+    description: "variables available by discharge; must not include future follow-up"
+    variables:
+      - "anchor_age"
+      - "gender"
+      - "admission_type"
+      - "admission_location"
+      - "insurance"
+      - "length_of_stay_days"
+      - "prior_admissions_count"
+      - "days_since_prior_discharge"
+      - "last_creatinine_before_discharge"
+      - "last_bun_before_discharge"
+      - "creatinine_change_during_stay"
+      - "dialysis_related_code_or_procedure"
+  forbidden_or_high_risk:
+    variables:
+      - "readmission_30d"
+      - "next_admittime"
+      - "next_hadm_id"
+      - "days_to_next_admission"
+      - "future_labs_after_discharge"
+      - "followup_events_within_30d"
+      - "post_discharge_creatinine"
+      - "post_discharge_dialysis"
+      - "deathtime"
+      - "dod"
+      - "hospital_expire_flag"
+      - "discharge_location"
+
+models:
+  logistic_regression:
+    enabled: true
+    note: "dependency-light baseline can reuse scipy logistic regression"
+  random_forest:
+    enabled: false
+    note: "enable after scikit-learn is installed"
+  xgboost:
+    enabled: false
+    note: "optional after baseline pipeline is stable"
+
+metrics:
+  required:
+    - "event_rate"
+    - "AUROC"
+    - "AUPRC"
+    - "sensitivity"
+    - "specificity"
+    - "PPV"
+    - "NPV"
+    - "Brier_score"
+  note: "Do not report AUROC alone because readmission is class-imbalanced."
+
+split_strategy:
+  method: "patient_level_hash_split"
+  group_column: "subject_id"
+  train_size: 0.70
+  validation_size: 0.15
+  test_size: 0.15
+  random_seed: 20260619
+  leakage_checks:
+    check_patient_overlap: true
+    check_outcome_proxy_features: true
+    check_future_followup_features: true
+
+outputs:
+  cohort_csv: "data/processed/mimic_ckd_readmission_cohort.csv"
+  lab_features_24h_csv: "data/processed/mimic_ckd_lab_features_24h.csv"
+  lab_features_discharge_csv: "data/processed/mimic_ckd_lab_features_discharge.csv"
+  tables:
+    cohort_summary: "outputs/tables/mimic_ckd_cohort_summary.csv"
+    split_summary: "outputs/tables/mimic_ckd_split_summary.csv"
+    table1_basic: "outputs/tables/mimic_ckd_table1_basic.csv"
+    feature_missingness: "outputs/tables/mimic_ckd_feature_missingness.csv"
+    lab_itemid_mapping: "outputs/tables/mimic_ckd_lab_itemid_mapping.csv"
+    lab_feature_availability: "outputs/tables/mimic_ckd_lab_feature_availability.csv"
+    lab_extraction_stats: "outputs/tables/mimic_ckd_lab_extraction_stats.csv"
+    feature_time_audit: "outputs/tables/mimic_ckd_feature_time_audit.csv"
+    model_performance: "outputs/tables/mimic_ckd_model_performance.csv"
+    prediction_time_model_performance: "outputs/tables/mimic_ckd_prediction_time_model_performance.csv"
+    logistic_coefficients: "outputs/tables/mimic_ckd_logistic_coefficients.csv"
+    test_predictions: "outputs/tables/mimic_ckd_test_predictions.csv"
+    leakage_sensitivity: "outputs/tables/mimic_ckd_leakage_sensitivity.csv"
+    outcome_sensitivity: "outputs/tables/mimic_ckd_outcome_sensitivity.csv"
+    readmission_next_type: "outputs/tables/mimic_ckd_30d_readmission_next_type.csv"
+  reports:
+    run_summary: "outputs/reports/mimic_ckd_run_summary.md"
+    lab_itemid_mapping: "outputs/reports/mimic_ckd_lab_itemid_mapping_report.md"
+    lab_features: "outputs/reports/mimic_ckd_lab_feature_report.md"
+    feature_time_audit: "outputs/reports/mimic_ckd_feature_time_audit_report.md"
+    prediction_time_model: "outputs/reports/mimic_ckd_prediction_time_model_report.md"
+    prediction_time_figure: "outputs/reports/mimic_ckd_prediction_time_figure_report.md"
+    leakage_audit: "outputs/reports/mimic_ckd_leakage_audit_report.md"
+    leakage_sensitivity: "outputs/reports/mimic_ckd_leakage_sensitivity_report.md"
+    outcome_sensitivity: "outputs/reports/mimic_ckd_outcome_sensitivity_report.md"
+    methods_results_draft: "outputs/reports/mimic_ckd_methods_results_draft.md"
+    study_package: "outputs/reports/mimic_ckd_study_package.md"
+  figures:
+    prediction_time_auroc: "outputs/figures/mimic_ckd_prediction_time_auroc.png"
+    prediction_time_auprc: "outputs/figures/mimic_ckd_prediction_time_auprc.png"

@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "boundary": "Local Agent control cooldown invalidation only; no medical QA, diagnosis, or treatment recommendation.",
+  "description": "Files that define whether a previous safe-auto queue PASS still applies to the current Agent control implementation.",
+  "fingerprint_inputs": [
+    "src/chrono_ehr/agent_cooldown_fingerprint.py",
+    "src/chrono_ehr/validate_agent_cooldown_fingerprint.py",
+    "src/chrono_ehr/agent_next_task_planner.py",
+    "src/chrono_ehr/agent_task_queue.py",
+    "src/chrono_ehr/agent_task_queue_runner.py",
+    "src/chrono_ehr/agent_task_router.py",
+    "src/chrono_ehr/build_agent_state.py",
+    "src/chrono_ehr/validate_agent_state.py",
+    "src/chrono_ehr/agent_status_card.py",
+    "src/chrono_ehr/validate_agent_status_card.py",
+    "src/chrono_ehr/validate_agent_next_tasks.py",
+    "src/chrono_ehr/validate_agent_task_queue.py",
+    "src/chrono_ehr/validate_agent_task_queue_execution.py",
+    "configs/agent_action_catalog.json",
+    "configs/agent_entrypoints.json"
+  ],
+  "excluded_volatile_patterns": [
+    "outputs/",
+    "outputs/state/agent_task_queue_execution_history.csv",
+    "outputs/tables/agent_self_check.csv",
+    "outputs/tables/agent_recovery_plan.csv"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "template_id": "english_brief_v0_1",
+  "language": "en",
+  "status": "draft_ready_markdown",
+  "title": "ChronoEHR-Agent: A Time-Aware EHR Benchmark for Chronic-Disease Readmission Prediction",
+  "subtitle": "English Methods/Results brief generated from completed local benchmark outputs",
+  "boundary_statement": "This document summarizes a retrospective EHR data analysis workflow. It is not a medical question-answering system and does not provide diagnosis or treatment recommendations.",
+  "abstract": {
+    "background": "EHR prediction studies are sensitive to prediction time, follow-up windows, and leakage from variables that are only known after the intended prediction point.",
+    "objective": "To summarize a local time-aware benchmark for 30-day readmission prediction across chronic-disease cohorts and to document prediction-time feature availability, leakage audit, and traditional baseline modeling.",
+    "methods": "The benchmark uses MIMIC-IV v3.1 cohorts for diabetes, chronic kidney disease, heart failure, and hypertension. Models are evaluated at admission, within the first 24 hours, and before discharge using patient-level splits and traditional machine-learning baselines.",
+    "conclusion": "The current results should be interpreted as a research-method benchmark and local analysis tool, not as a deployable clinical model."
+  },
+  "methods": {
+    "data_source": "We used locally stored MIMIC-IV v3.1 data for retrospective structured EHR analyses.",
+    "cohort_design": "Four chronic-disease cohorts were identified using diagnosis-code based cohort definitions. Each index admission was linked to subsequent admissions to define all-cause 30-day readmission.",
+    "prediction_times": "ChronoEHR-Agent explicitly separates admission-time, first-24-hour, and discharge-time prediction settings. Each feature set is constrained to variables available at or before the corresponding prediction time.",
+    "leakage_audit": "The workflow audits outcome labels, outcome proxies, post-discharge follow-up variables, patient-level train-test overlap, and high-risk variables whose availability changes across prediction times.",
+    "models": "Baseline models include logistic regression, Random Forest, histogram gradient boosting, and calibrated variants when dependencies are available. Metrics include AUROC, AUPRC, Brier score, threshold summaries, calibration summaries, and decision-curve net benefit."
+  },
+  "limitations": [
+    "The benchmark is retrospective and depends on local MIMIC-IV preprocessing choices.",
+    "The current English brief is generated as reviewed Markdown and a review DOCX draft; the main manuscript DOCX preset remains scaffold-only until broader language-aware body-text templates are implemented.",
+    "Readmission is currently summarized as all-cause 30-day readmission, with sensitivity analyses for alternative definitions.",
+    "External datasets such as eICU and CHARLS are tracked but remain data-pending in the current local workspace."
+  ]
+}

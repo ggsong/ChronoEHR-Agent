@@ -1,0 +1,30 @@
+{
+  "language": "en",
+  "status": "scaffold_only",
+  "description": "English brief manuscript preset scaffold. The current DOCX exporter is still Chinese-first, so this preset is discoverable but not recommended for final English export until English body-text templates are implemented.",
+  "outputs": {
+    "main_docx": "outputs/reports/ChronoEHR_Methods_Results_English_Brief.docx",
+    "supplement_docx": "outputs/reports/ChronoEHR_Supplementary_English_Brief.docx"
+  },
+  "main_document": {
+    "include_sections": {
+      "title": true,
+      "methods": true,
+      "cohort_summary": true,
+      "prediction_time_delta": true,
+      "feature_group_ablation": false,
+      "selected_feature_sets": false,
+      "ed_los_sensitivity": true,
+      "threshold_analysis": true,
+      "decision_curve": true,
+      "subgroup_performance": true,
+      "next_writing_suggestions": true
+    }
+  },
+  "supplement": {
+    "include_tables": ["S1", "S2", "S6", "S7", "S8", "S9", "S10"],
+    "max_rows": {
+      "S10": 40
+    }
+  }
+}

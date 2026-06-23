@@ -1,0 +1,359 @@
+{
+  "version": "0.1",
+  "purpose": "Central registry for time windows and feature availability in ChronoEHR-Agent.",
+  "time_reference_columns": {
+    "admission_time": "admittime",
+    "discharge_time": "dischtime",
+    "prediction_time": "prediction_time",
+    "followup_start": "dischtime"
+  },
+  "windows": {
+    "admission_baseline": {
+      "meaning": "Variables known at or before hospital admission.",
+      "start": "pre_admission",
+      "end": "admittime",
+      "usable_for_prediction_times": [
+        "admission",
+        "inhospital_24h",
+        "discharge"
+      ],
+      "forbidden_for_prediction_times": [],
+      "leakage_note": "Safe baseline window if variables are truly known by admission time."
+    },
+    "first_24h": {
+      "meaning": "Events available during the first 24 hours of the index admission.",
+      "start": "admittime",
+      "end": "min(admittime + 24h, dischtime)",
+      "usable_for_prediction_times": [
+        "inhospital_24h",
+        "discharge"
+      ],
+      "forbidden_for_prediction_times": [
+        "admission"
+      ],
+      "leakage_note": "Do not use for admission-time prediction."
+    },
+    "admission_to_discharge": {
+      "meaning": "Events available after admission and before discharge.",
+      "start": "admittime",
+      "end": "dischtime",
+      "usable_for_prediction_times": [
+        "discharge"
+      ],
+      "forbidden_for_prediction_times": [
+        "admission",
+        "inhospital_24h"
+      ],
+      "leakage_note": "Safe only for discharge-time prediction; leaks future information for earlier prediction times."
+    },
+    "followup_30d": {
+      "meaning": "Events after discharge used only for outcome construction.",
+      "start": "dischtime",
+      "end": "dischtime + 30d",
+      "usable_for_prediction_times": [],
+      "forbidden_for_prediction_times": [
+        "admission",
+        "inhospital_24h",
+        "discharge"
+      ],
+      "leakage_note": "Outcome/follow-up window. Never use as model features."
+    }
+  },
+  "feature_sources": {
+    "labs": {
+      "mimic_table": "hosp/labevents.csv.gz",
+      "available_time": {
+        "primary": "storetime",
+        "fallback": "charttime"
+      },
+      "value_column": "valuenum",
+      "window_outputs": [
+        {
+          "cohort": "diabetes",
+          "window": "first_24h",
+          "path": "data/processed/mimic_diabetes_lab_features_24h.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "first_24h",
+          "path": "data/processed/mimic_ckd_lab_features_24h.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_ckd_lab_features_discharge.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "first_24h",
+          "path": "data/processed/mimic_heart_failure_lab_features_24h.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_heart_failure_lab_features_discharge.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "first_24h",
+          "path": "data/processed/mimic_hypertension_lab_features_24h.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_hypertension_lab_features_discharge.csv"
+        }
+      ]
+    },
+    "diabetes_medications": {
+      "mimic_table": "hosp/prescriptions.csv.gz",
+      "available_time": {
+        "primary": "starttime",
+        "fallback": "stoptime"
+      },
+      "window_outputs": [
+        {
+          "cohort": "diabetes",
+          "window": "first_24h",
+          "path": "data/processed/mimic_diabetes_med_features_24h.csv"
+        }
+      ]
+    },
+    "general_medications": {
+      "mimic_table": "hosp/prescriptions.csv.gz",
+      "available_time": {
+        "primary": "starttime",
+        "fallback": "stoptime"
+      },
+      "drug_column": "drug",
+      "route_column": "route",
+      "window_outputs": [
+        {
+          "cohort": "diabetes",
+          "window": "first_24h",
+          "path": "data/processed/mimic_diabetes_general_med_features_24h.csv"
+        },
+        {
+          "cohort": "diabetes",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_diabetes_general_med_features_discharge.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "first_24h",
+          "path": "data/processed/mimic_ckd_general_med_features_24h.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_ckd_general_med_features_discharge.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "first_24h",
+          "path": "data/processed/mimic_heart_failure_general_med_features_24h.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_heart_failure_general_med_features_discharge.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "first_24h",
+          "path": "data/processed/mimic_hypertension_general_med_features_24h.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_hypertension_general_med_features_discharge.csv"
+        }
+      ]
+    },
+    "vital_signs": {
+      "mimic_table": "icu/chartevents.csv.gz",
+      "item_dictionary": "icu/d_items.csv.gz",
+      "available_time": {
+        "primary": "storetime",
+        "fallback": "charttime"
+      },
+      "value_column": "valuenum",
+      "itemids": {
+        "220045": "heart_rate",
+        "220179": "sbp",
+        "220180": "dbp",
+        "220181": "mbp",
+        "220210": "respiratory_rate",
+        "220277": "spo2",
+        "223761": "temperature_c",
+        "223762": "temperature_c"
+      },
+      "plausible_ranges": {
+        "heart_rate": [
+          20,
+          250
+        ],
+        "sbp": [
+          40,
+          300
+        ],
+        "dbp": [
+          20,
+          200
+        ],
+        "mbp": [
+          30,
+          220
+        ],
+        "respiratory_rate": [
+          4,
+          80
+        ],
+        "spo2": [
+          40,
+          100
+        ],
+        "temperature_c": [
+          25,
+          45
+        ]
+      },
+      "unit_conversions": [
+        {
+          "itemid": 223761,
+          "from": "fahrenheit",
+          "to": "celsius",
+          "formula": "(value - 32) * 5 / 9"
+        }
+      ],
+      "window_outputs": [
+        {
+          "cohort": "diabetes",
+          "window": "first_24h",
+          "path": "data/processed/mimic_diabetes_vital_features_24h.csv"
+        },
+        {
+          "cohort": "diabetes",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_diabetes_vital_features_discharge.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "first_24h",
+          "path": "data/processed/mimic_ckd_vital_features_24h.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_ckd_vital_features_discharge.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "first_24h",
+          "path": "data/processed/mimic_heart_failure_vital_features_24h.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_heart_failure_vital_features_discharge.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "first_24h",
+          "path": "data/processed/mimic_hypertension_vital_features_24h.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_hypertension_vital_features_discharge.csv"
+        }
+      ]
+    },
+    "procedure_events": {
+      "mimic_table": "icu/procedureevents.csv.gz",
+      "item_dictionary": "icu/d_items.csv.gz",
+      "available_time": {
+        "primary": "starttime",
+        "fallback": "storetime"
+      },
+      "value_column": "value",
+      "category_column": "category",
+      "window_outputs": [
+        {
+          "cohort": "diabetes",
+          "window": "first_24h",
+          "path": "data/processed/mimic_diabetes_procedure_features_24h.csv"
+        },
+        {
+          "cohort": "diabetes",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_diabetes_procedure_features_discharge.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "first_24h",
+          "path": "data/processed/mimic_ckd_procedure_features_24h.csv"
+        },
+        {
+          "cohort": "ckd",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_ckd_procedure_features_discharge.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "first_24h",
+          "path": "data/processed/mimic_heart_failure_procedure_features_24h.csv"
+        },
+        {
+          "cohort": "heart_failure",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_heart_failure_procedure_features_discharge.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "first_24h",
+          "path": "data/processed/mimic_hypertension_procedure_features_24h.csv"
+        },
+        {
+          "cohort": "hypertension",
+          "window": "admission_to_discharge",
+          "path": "data/processed/mimic_hypertension_procedure_features_discharge.csv"
+        }
+      ]
+    }
+  },
+  "cohorts": {
+    "diabetes": {
+      "cohort_path": "data/processed/mimic_diabetes_readmission_cohort.csv",
+      "allowed_prediction_times": [
+        "admission",
+        "inhospital_24h",
+        "discharge"
+      ]
+    },
+    "ckd": {
+      "cohort_path": "data/processed/mimic_ckd_readmission_cohort.csv",
+      "allowed_prediction_times": [
+        "admission",
+        "inhospital_24h",
+        "discharge"
+      ]
+    },
+    "heart_failure": {
+      "cohort_path": "data/processed/mimic_heart_failure_readmission_cohort.csv",
+      "allowed_prediction_times": [
+        "admission",
+        "inhospital_24h",
+        "discharge"
+      ]
+    },
+    "hypertension": {
+      "cohort_path": "data/processed/mimic_hypertension_readmission_cohort.csv",
+      "allowed_prediction_times": [
+        "admission",
+        "inhospital_24h",
+        "discharge"
+      ]
+    }
+  }
+}

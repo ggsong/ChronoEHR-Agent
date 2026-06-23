@@ -1,0 +1,183 @@
+# ChronoEHR-Agent study config template
+# 第一版目标：让研究问题、预测时间点、特征集和输出路径都可以被清楚记录和复现。
+
+dataset:
+  name: "mimic_repeat_creatinine_demo"
+  type: "mimic_style_csv"
+  root_path: "/path/to/mimic/or/processed/output"
+  version: "local"
+  tables:
+    patients: "hosp/patients.csv.gz"
+    admissions: "hosp/admissions.csv.gz"
+    icustays: "icu/icustays.csv.gz"
+    labevents: "hosp/labevents.csv.gz"
+    d_labitems: "hosp/d_labitems.csv.gz"
+  id_columns:
+    patient_id: "subject_id"
+    admission_id: "hadm_id"
+    stay_id: "stay_id"
+
+cohort_definition:
+  study_name: "Prediction-time-aware repeat creatinine demo"
+  population: "adult ICU stays with at least two creatinine measurements"
+  inclusion_criteria:
+    - "age >= 18"
+    - "ICU stay has at least two target lab measurements"
+    - "previous lab result time is available"
+    - "next target lab occurs within the prediction horizon"
+  exclusion_criteria:
+    - "missing or invalid patient_id"
+    - "missing or invalid prediction_time"
+    - "next lab occurs before previous result is available"
+    - "implausible lab values"
+  target_condition:
+    chronic_focus: "renal dysfunction or CKD-related subgroup can be added after diagnosis codes are available"
+    diagnosis_codes: []
+
+outcome:
+  name: "meaningful_next_creatinine_change"
+  type: "binary"
+  label_positive: "next creatinine has clinically meaningful change"
+  label_negative: "next creatinine has no meaningful change"
+  source_table: "labevents"
+  target_lab:
+    name: "creatinine"
+    itemids: []
+  definition:
+    primary_rule: "absolute_or_relative_change_threshold"
+    absolute_change_threshold: null
+    relative_change_threshold: null
+    category_crossing: true
+  followup_window:
+    start_after_prediction_time_hours: 6
+    end_after_prediction_time_hours: 48
+  sensitivity_windows:
+    - start_after_prediction_time_hours: 12
+      end_after_prediction_time_hours: 72
+
+prediction_times:
+  primary:
+    name: "previous_result_storetime"
+    time_column: "storetime"
+    description: "time when previous lab result is likely available"
+  sensitivity:
+    - name: "previous_lab_charttime"
+      time_column: "charttime"
+      description: "sample or chart time, used only for sensitivity analysis"
+  scenarios:
+    admission_prediction:
+      enabled: false
+      allowed_feature_time: "at_or_before_admission_time"
+    inhospital_prediction:
+      enabled: true
+      allowed_feature_time: "at_or_before_prediction_time"
+    discharge_prediction:
+      enabled: false
+      allowed_feature_time: "at_or_before_discharge_time"
+
+feature_sets:
+  admission_minimal:
+    enabled: false
+    description: "only variables available at admission"
+    variables:
+      - "age"
+      - "gender"
+      - "admission_type"
+  temporal_tier1:
+    enabled: true
+    description: "minimal features available before prediction time"
+    variables:
+      - "age"
+      - "gender"
+      - "admission_type"
+      - "icu_careunit"
+      - "time_since_icu_admission"
+      - "previous_creatinine_value"
+      - "previous_creatinine_abnormal_flag"
+      - "time_since_previous_creatinine"
+  temporal_tier2_lab_history:
+    enabled: true
+    description: "lab history before prediction time"
+    windows_hours: [24, 48]
+    aggregations:
+      - "last"
+      - "min"
+      - "max"
+      - "mean"
+      - "count"
+      - "slope"
+  naive_all_features:
+    enabled: false
+    description: "for leakage demonstration only, not for final model"
+
+models:
+  logistic_regression:
+    enabled: true
+    class_weight: "balanced"
+    max_iter: 1000
+  random_forest:
+    enabled: true
+    n_estimators: 500
+    max_depth: null
+    class_weight: "balanced_subsample"
+  xgboost:
+    enabled: true
+    n_estimators: 500
+    learning_rate: 0.05
+    max_depth: 3
+  lightgbm:
+    enabled: false
+  mlp:
+    enabled: false
+
+metrics:
+  required:
+    - "event_rate"
+    - "AUROC"
+    - "AUPRC"
+    - "sensitivity"
+    - "specificity"
+    - "PPV"
+    - "NPV"
+    - "Brier_score"
+    - "calibration_slope"
+  fixed_alert_burden:
+    enabled: true
+    top_percent: [5, 10, 20]
+  subgroup_metrics:
+    enabled: true
+    subgroups:
+      - "age_group"
+      - "sex"
+      - "icu_careunit"
+      - "baseline_abnormal_creatinine"
+
+split_strategy:
+  method: "patient_level_split"
+  group_column: "subject_id"
+  train_size: 0.70
+  validation_size: 0.15
+  test_size: 0.15
+  random_seed: 20260619
+  leakage_checks:
+    check_patient_overlap: true
+    check_time_after_prediction: true
+    check_outcome_proxy_features: true
+
+outputs:
+  root_dir: "outputs"
+  tables:
+    cohort_table: "outputs/tables/table1_cohort.csv"
+    model_performance: "outputs/tables/model_performance.csv"
+    prediction_time_comparison: "outputs/tables/prediction_time_comparison.csv"
+    feature_missingness: "outputs/tables/feature_missingness.csv"
+  figures:
+    cohort_flow: "outputs/figures/cohort_flow.png"
+    roc_curve: "outputs/figures/roc_curve.png"
+    precision_recall_curve: "outputs/figures/precision_recall_curve.png"
+    calibration_plot: "outputs/figures/calibration_plot.png"
+  reports:
+    leakage_audit: "outputs/reports/leakage_audit_report.md"
+    methods_results_draft: "outputs/reports/methods_results_draft.md"
+    run_summary: "outputs/reports/run_summary.md"
+

@@ -1,0 +1,78 @@
+{
+  "active_study": "mimic_iv_3_1_diabetes_readmission",
+  "studies": [
+    {
+      "id": "mimic_iv_3_1_diabetes_readmission",
+      "status": "complete_demo",
+      "config": "configs/diabetes_mimic_readmission.yaml",
+      "dataset_root": "${MIMIC_IV_ROOT}",
+      "cohort": "diabetes",
+      "prediction_time": "discharge_time",
+      "outcome": "all_cause_30d_readmission",
+      "pipeline": "src/chrono_ehr/run_diabetes_demo.py"
+    },
+    {
+      "id": "mimic_iv_ckd_readmission",
+      "status": "model_ready",
+      "config": "configs/ckd_mimic_readmission.yaml",
+      "dataset_root": "${MIMIC_IV_ROOT}",
+      "cohort": "ckd",
+      "prediction_time": "admission_24h_discharge",
+      "outcome": "all_cause_30d_readmission",
+      "pipeline": "src/chrono_ehr/run_ckd_demo.py",
+      "protocol": "docs/ckd_mimic_demo_protocol.md",
+      "feature_time_map": "docs/mimic_ckd_feature_time_map.csv",
+      "next_step": "add CKD leakage sensitivity, outcome sensitivity, and stronger ML baselines"
+    },
+    {
+      "id": "mimic_iv_heart_failure_readmission",
+      "status": "model_ready",
+      "config": "configs/heart_failure_mimic_readmission.yaml",
+      "dataset_root": "${MIMIC_IV_ROOT}",
+      "cohort": "heart_failure",
+      "prediction_time": "admission_24h_discharge",
+      "outcome": "all_cause_30d_readmission",
+      "pipeline": "src/chrono_ehr/run_heart_failure_demo.py",
+      "next_step": "run stronger ML baselines and abstract diagnosis-code cohort builder"
+    },
+    {
+      "id": "mimic_iv_hypertension_readmission",
+      "status": "model_ready",
+      "config": "configs/hypertension_mimic_readmission.yaml",
+      "dataset_root": "${MIMIC_IV_ROOT}",
+      "cohort": "hypertension",
+      "prediction_time": "admission_discharge",
+      "outcome": "all_cause_30d_readmission",
+      "pipeline": "src/chrono_ehr/run_hypertension_demo.py",
+      "next_step": "add temporal lab/vital features"
+    }
+  ],
+  "planned_studies": [
+    {
+      "id": "eicu_temporal_mortality",
+      "status": "planned_data_pending",
+      "config": "configs/eicu_temporal_mortality_template.yaml",
+      "dataset_root": "${EICU_ROOT}",
+      "cohort": "adult_icu_stays",
+      "prediction_time": "icu_admission_first_24h_full_stay_reference",
+      "outcome": "hospital_mortality",
+      "protocol": "docs/eicu_temporal_mortality_protocol.md",
+      "feature_time_map": "docs/eicu_feature_time_map_template.csv",
+      "readiness_command": "python3 src/chrono_ehr/run_study.py --eicu-readiness",
+      "next_step": "download complete eICU raw CSV files, then rerun readiness before cohort/model code"
+    },
+    {
+      "id": "charls_incident_diabetes",
+      "status": "planned_data_pending",
+      "config": "configs/charls_incident_diabetes_template.yaml",
+      "dataset_root": "${CHARLS_ROOT}",
+      "cohort": "baseline_without_diabetes",
+      "prediction_time": "2011_baseline_wave",
+      "outcome": "incident_diabetes_2013_or_2015",
+      "protocol": "docs/charls_incident_diabetes_protocol.md",
+      "feature_time_map": "docs/charls_wave_map_template.csv",
+      "readiness_command": "python3 src/chrono_ehr/run_study.py --charls-readiness",
+      "next_step": "download approved CHARLS waves, then rerun readiness and build wave variable map"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+# ChronoEHR-Agent manuscript export template
+# 当前可执行配置请使用同名 JSON：
+# configs/manuscript_export_template.json
+#
+# 说明：
+# - language: "zh" 或 "en"。当前 zh 为主，en 先用于标题/标签层面的导出占位。
+# - include_sections 控制主文稿是否纳入对应结果段落。
+# - include_tables 控制补充附录导出哪些 S 表。
+# - max_rows 控制较长补充表的最大导出行数。
+
+language: zh
+
+outputs:
+  main_docx: outputs/reports/ChronoEHR_Methods_Results_Draft.docx
+  supplement_docx: outputs/reports/ChronoEHR_Supplementary_Appendix.docx
+
+main_document:
+  include_sections:
+    title: true
+    methods: true
+    cohort_summary: true
+    prediction_time_delta: true
+    feature_group_ablation: true
+    selected_feature_sets: true
+    ed_los_sensitivity: true
+    threshold_analysis: true
+    decision_curve: true
+    subgroup_performance: true
+    next_writing_suggestions: true
+
+supplement:
+  include_tables:
+    - S1
+    - S2
+    - S3
+    - S4
+    - S5
+    - S6
+    - S7
+    - S8
+    - S9
+    - S10
+  max_rows:
+    S4: 30
+    S10: 90

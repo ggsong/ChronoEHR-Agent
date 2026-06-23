@@ -1,0 +1,1892 @@
+{
+  "studies": {
+    "diabetes": {
+      "cohort_path": "data/processed/mimic_diabetes_readmission_cohort.csv",
+      "outputs": {
+        "performance": "outputs/tables/mimic_diabetes_prediction_time_model_performance.csv",
+        "coefficients": "outputs/tables/mimic_diabetes_prediction_time_logistic_coefficients.csv",
+        "predictions": "outputs/tables/mimic_diabetes_prediction_time_test_predictions.csv",
+        "report": "outputs/reports/mimic_diabetes_prediction_time_model_report.md"
+      },
+      "feature_groups": {
+        "categorical": [
+          "gender",
+          "admission_type",
+          "admission_location",
+          "insurance",
+          "language",
+          "marital_status",
+          "race"
+        ],
+        "admission_safe_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge"
+        ],
+        "discharge_safe_numeric": [
+          "anchor_age",
+          "ed_los_hours",
+          "length_of_stay_days",
+          "prior_admissions_count",
+          "days_since_prior_discharge"
+        ],
+        "lab24h_numeric": {
+          "prefix": "lab24h",
+          "names": [
+            "glucose",
+            "hba1c",
+            "hba1c_absolute",
+            "creatinine",
+            "bun"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "med24h_numeric": {
+          "prefix": "med24h",
+          "names": [
+            "insulin",
+            "metformin",
+            "sulfonylurea",
+            "dpp4",
+            "tzd",
+            "glp1",
+            "sglt2",
+            "alpha_glucosidase",
+            "any_diabetes"
+          ],
+          "stats": [
+            "count",
+            "has"
+          ]
+        },
+        "vital24h_numeric": {
+          "prefix": "vital24h",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "vitaldischarge_numeric": {
+          "prefix": "vitaldischarge",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "proc24h_numeric": {
+          "prefix": "proc24h",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "procdischarge_numeric": {
+          "prefix": "procdischarge",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "genmed24h_numeric": {
+          "prefix": "genmed24h",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        },
+        "genmeddischarge_numeric": {
+          "prefix": "genmeddischarge",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        }
+      },
+      "specs": [
+        {
+          "feature_set": "admission_safe_minimal",
+          "prediction_time": "admission",
+          "numeric_groups": [
+            "admission_safe_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": []
+        },
+        {
+          "feature_set": "inhospital_24h_lab_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "admission_safe_numeric",
+            "lab24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_lab_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_med_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "admission_safe_numeric",
+            "lab24h_numeric",
+            "med24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_lab_features_24h.csv",
+            "data/processed/mimic_diabetes_med_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_med_vital_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "admission_safe_numeric",
+            "lab24h_numeric",
+            "med24h_numeric",
+            "vital24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_lab_features_24h.csv",
+            "data/processed/mimic_diabetes_med_features_24h.csv",
+            "data/processed/mimic_diabetes_vital_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_med_vital_proc_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "admission_safe_numeric",
+            "lab24h_numeric",
+            "med24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_lab_features_24h.csv",
+            "data/processed/mimic_diabetes_med_features_24h.csv",
+            "data/processed/mimic_diabetes_vital_features_24h.csv",
+            "data/processed/mimic_diabetes_procedure_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_med_vital_proc_genmed_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "admission_safe_numeric",
+            "lab24h_numeric",
+            "med24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric",
+            "genmed24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_lab_features_24h.csv",
+            "data/processed/mimic_diabetes_med_features_24h.csv",
+            "data/processed/mimic_diabetes_vital_features_24h.csv",
+            "data/processed/mimic_diabetes_procedure_features_24h.csv",
+            "data/processed/mimic_diabetes_general_med_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_safe_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": []
+        },
+        {
+          "feature_set": "discharge_safe_vital_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "vitaldischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_vital_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_safe_vital_proc_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_vital_features_discharge.csv",
+            "data/processed/mimic_diabetes_procedure_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_safe_vital_proc_genmed_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric",
+            "genmeddischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_diabetes_vital_features_discharge.csv",
+            "data/processed/mimic_diabetes_procedure_features_discharge.csv",
+            "data/processed/mimic_diabetes_general_med_features_discharge.csv"
+          ]
+        }
+      ],
+      "report": {
+        "title": "Prediction-Time Model Comparison",
+        "intro": "这个报告用同一个糖尿病 30 天再入院 cohort，比较入院时、入院后 24 小时和出院时的安全特征集。目的不是构建最佳模型，而是量化 prediction time 改变后，允许使用的变量集合和模型表现会怎样变化。",
+        "feature_descriptions": [
+          "`admission_safe_minimal`：只使用入院时或入院前已经可用的变量。",
+          "`inhospital_24h_lab_minimal`：使用入院后 24 小时内已经可用的化验特征。",
+          "`inhospital_24h_lab_med_minimal`：使用入院后 24 小时内已经可用的化验和糖尿病相关用药特征。",
+          "`discharge_safe_minimal`：使用出院时已经可用的最小变量，包含 `ed_los_hours` 和 `length_of_stay_days`。",
+          "`inhospital_24h_lab_med_vital_minimal`：在 24 小时化验和用药基础上加入 ICU vital signs。",
+          "`discharge_safe_vital_minimal`：在出院时安全变量基础上加入出院前 ICU vital signs。",
+          "`inhospital_24h_lab_med_vital_proc_minimal`：在 24 小时化验、用药和 ICU vital signs 基础上加入 ICU procedure events。",
+          "`discharge_safe_vital_proc_minimal`：在出院时安全变量和 ICU vital signs 基础上加入出院前 ICU procedure events。",
+          "`inhospital_24h_lab_med_vital_proc_genmed_minimal`: adds broad medication classes observed within the first 24h.",
+          "`discharge_safe_vital_proc_genmed_minimal`: adds broad medication classes observed before discharge."
+        ],
+        "ordered_feature_sets": [
+          "admission_safe_minimal",
+          "inhospital_24h_lab_minimal",
+          "inhospital_24h_lab_med_minimal",
+          "discharge_safe_minimal",
+          "inhospital_24h_lab_med_vital_minimal",
+          "discharge_safe_vital_minimal",
+          "inhospital_24h_lab_med_vital_proc_minimal",
+          "discharge_safe_vital_proc_minimal",
+          "inhospital_24h_lab_med_vital_proc_genmed_minimal",
+          "discharge_safe_vital_proc_genmed_minimal"
+        ],
+        "difference_pairs": [
+          [
+            "admission_safe_minimal",
+            "inhospital_24h_lab_minimal",
+            "24h labs minus admission"
+          ],
+          [
+            "admission_safe_minimal",
+            "inhospital_24h_lab_med_minimal",
+            "24h labs+meds minus admission"
+          ],
+          [
+            "admission_safe_minimal",
+            "discharge_safe_minimal",
+            "discharge minus admission"
+          ],
+          [
+            "inhospital_24h_lab_med_minimal",
+            "inhospital_24h_lab_med_vital_minimal",
+            "24h vitals added to labs+meds"
+          ],
+          [
+            "discharge_safe_minimal",
+            "discharge_safe_vital_minimal",
+            "discharge vitals minus discharge minimal"
+          ],
+          [
+            "inhospital_24h_lab_med_vital_minimal",
+            "inhospital_24h_lab_med_vital_proc_minimal",
+            "24h procedures added to labs+meds+vitals"
+          ],
+          [
+            "discharge_safe_vital_minimal",
+            "discharge_safe_vital_proc_minimal",
+            "discharge procedures added to vitals"
+          ],
+          [
+            "inhospital_24h_lab_med_vital_proc_minimal",
+            "inhospital_24h_lab_med_vital_proc_genmed_minimal",
+            "24h general medications added to labs+meds+vitals+procedures"
+          ],
+          [
+            "discharge_safe_vital_proc_minimal",
+            "discharge_safe_vital_proc_genmed_minimal",
+            "discharge general medications added to vitals+procedures"
+          ]
+        ],
+        "leakage_notes": [
+          "入院模型没有使用 `ed_los_hours`、`length_of_stay_days`、出院前化验或随访窗口内信息。",
+          "24h 模型只使用入院后 24 小时内可用的化验和用药特征。",
+          "出院模型可使用住院过程内变量，但不能使用出院后的 30 天随访信息。",
+          "这些变量不能倒拿去做更早时间点的预测，否则就是典型的时间点错误。",
+          "Vital sign features 来自 ICU chartevents，因此覆盖的是住院中进入 ICU 或有 ICU charted vitals 的子集；缺失本身也会作为 has/count 特征进入模型。",
+          "ICU procedure events 来自 procedureevents，适合做时间窗敏感的住院过程特征；discharge-window procedure features 不能用于更早时间点。"
+        ]
+      }
+    },
+    "ckd": {
+      "cohort_path": "data/processed/mimic_ckd_readmission_cohort.csv",
+      "outputs": {
+        "performance": "outputs/tables/mimic_ckd_prediction_time_model_performance.csv",
+        "coefficients": "outputs/tables/mimic_ckd_logistic_coefficients.csv",
+        "predictions": "outputs/tables/mimic_ckd_test_predictions.csv",
+        "report": "outputs/reports/mimic_ckd_prediction_time_model_report.md"
+      },
+      "feature_groups": {
+        "categorical": [
+          "gender",
+          "admission_type",
+          "admission_location",
+          "insurance",
+          "language",
+          "marital_status",
+          "race"
+        ],
+        "admission_safe_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_ckd_diagnosis"
+        ],
+        "inhospital_24h_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_ckd_diagnosis",
+          "ed_los_hours"
+        ],
+        "discharge_safe_numeric": [
+          "anchor_age",
+          "ed_los_hours",
+          "length_of_stay_days",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_ckd_diagnosis",
+          "current_ckd_admission",
+          "known_ckd_before_or_current_admission"
+        ],
+        "ckd_lab24h_numeric": {
+          "prefix": "ckdlab24h",
+          "names": [
+            "creatinine",
+            "bun",
+            "potassium",
+            "sodium",
+            "bicarbonate",
+            "hemoglobin"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "ckd_labdischarge_numeric": {
+          "prefix": "ckdlabdischarge",
+          "names": [
+            "creatinine",
+            "bun",
+            "potassium",
+            "sodium",
+            "bicarbonate",
+            "hemoglobin"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "vital24h_numeric": {
+          "prefix": "vital24h",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "vitaldischarge_numeric": {
+          "prefix": "vitaldischarge",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "proc24h_numeric": {
+          "prefix": "proc24h",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "procdischarge_numeric": {
+          "prefix": "procdischarge",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "genmed24h_numeric": {
+          "prefix": "genmed24h",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        },
+        "genmeddischarge_numeric": {
+          "prefix": "genmeddischarge",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        }
+      },
+      "specs": [
+        {
+          "feature_set": "admission_safe_minimal",
+          "prediction_time": "admission",
+          "numeric_groups": [
+            "admission_safe_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": []
+        },
+        {
+          "feature_set": "inhospital_24h_lab_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "ckd_lab24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "ckd_lab24h_numeric",
+            "vital24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_24h.csv",
+            "data/processed/mimic_ckd_vital_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_proc_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "ckd_lab24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_24h.csv",
+            "data/processed/mimic_ckd_vital_features_24h.csv",
+            "data/processed/mimic_ckd_procedure_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_proc_genmed_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "ckd_lab24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric",
+            "genmed24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_24h.csv",
+            "data/processed/mimic_ckd_vital_features_24h.csv",
+            "data/processed/mimic_ckd_procedure_features_24h.csv",
+            "data/processed/mimic_ckd_general_med_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "ckd_labdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "ckd_labdischarge_numeric",
+            "vitaldischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_discharge.csv",
+            "data/processed/mimic_ckd_vital_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_proc_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "ckd_labdischarge_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_discharge.csv",
+            "data/processed/mimic_ckd_vital_features_discharge.csv",
+            "data/processed/mimic_ckd_procedure_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_proc_genmed_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "ckd_labdischarge_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric",
+            "genmeddischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_ckd_lab_features_discharge.csv",
+            "data/processed/mimic_ckd_vital_features_discharge.csv",
+            "data/processed/mimic_ckd_procedure_features_discharge.csv",
+            "data/processed/mimic_ckd_general_med_features_discharge.csv"
+          ]
+        }
+      ],
+      "report": {
+        "title": "MIMIC CKD Prediction-Time Model Report",
+        "intro": "这个报告是 ChronoEHR-Agent 的第二个慢病队列 demo：CKD 30 天再入院预测。重点不是追求最高分，而是展示同一个研究问题在不同 prediction time 下，哪些变量合法、模型表现如何变化。",
+        "feature_descriptions": [
+          "`admission_safe_minimal`：入院时/入院前可知道的变量，包括人口学、入院类型、既往住院史、既往 CKD 记录。",
+          "`inhospital_24h_lab_minimal`：上面变量 + 入院后 24 小时内可用的 creatinine、BUN、potassium、sodium、bicarbonate、hemoglobin。",
+          "`discharge_lab_minimal`：出院前可用的住院过程信息和入院至出院期间化验摘要。",
+          "`inhospital_24h_lab_vital_minimal`：在 CKD 24 小时化验基础上加入 ICU vital signs。",
+          "`discharge_lab_vital_minimal`：在 CKD 出院前化验基础上加入出院前 ICU vital signs。",
+          "`inhospital_24h_lab_vital_proc_minimal`：在 CKD 24 小时化验和 ICU vital signs 基础上加入 ICU procedure events。",
+          "`discharge_lab_vital_proc_minimal`：在 CKD 出院前化验和 ICU vital signs 基础上加入出院前 ICU procedure events。",
+          "`inhospital_24h_lab_vital_proc_genmed_minimal`: adds broad medication classes observed within the first 24h.",
+          "`discharge_lab_vital_proc_genmed_minimal`: adds broad medication classes observed before discharge."
+        ],
+        "ordered_feature_sets": [
+          "admission_safe_minimal",
+          "inhospital_24h_lab_minimal",
+          "discharge_lab_minimal",
+          "inhospital_24h_lab_vital_minimal",
+          "discharge_lab_vital_minimal",
+          "inhospital_24h_lab_vital_proc_minimal",
+          "discharge_lab_vital_proc_minimal",
+          "inhospital_24h_lab_vital_proc_genmed_minimal",
+          "discharge_lab_vital_proc_genmed_minimal"
+        ],
+        "difference_pairs": [
+          [
+            "admission_safe_minimal",
+            "inhospital_24h_lab_minimal",
+            "24h labs minus admission"
+          ],
+          [
+            "admission_safe_minimal",
+            "discharge_lab_minimal",
+            "discharge labs minus admission"
+          ],
+          [
+            "inhospital_24h_lab_minimal",
+            "inhospital_24h_lab_vital_minimal",
+            "24h vitals added to labs"
+          ],
+          [
+            "discharge_lab_minimal",
+            "discharge_lab_vital_minimal",
+            "discharge vitals added to labs"
+          ],
+          [
+            "inhospital_24h_lab_vital_minimal",
+            "inhospital_24h_lab_vital_proc_minimal",
+            "24h procedures added to labs+vitals"
+          ],
+          [
+            "discharge_lab_vital_minimal",
+            "discharge_lab_vital_proc_minimal",
+            "discharge procedures added to labs+vitals"
+          ],
+          [
+            "inhospital_24h_lab_vital_proc_minimal",
+            "inhospital_24h_lab_vital_proc_genmed_minimal",
+            "24h general medications added to labs+vitals+procedures"
+          ],
+          [
+            "discharge_lab_vital_proc_minimal",
+            "discharge_lab_vital_proc_genmed_minimal",
+            "discharge general medications added to labs+vitals+procedures"
+          ]
+        ],
+        "leakage_notes": [
+          "入院模型没有使用 `length_of_stay_days`、出院前化验、下次入院时间等未来信息。",
+          "24h 模型只使用 `available_time <= min(admittime + 24h, dischtime)` 的化验。",
+          "出院模型只使用 `available_time <= dischtime` 的化验，没有使用出院后的 30 天随访窗口信息。",
+          "CKD 队列定义里包含“本次住院 CKD 诊断码”，这是回顾性队列构建常见做法；但入院预测特征里只使用 `prior_ckd_diagnosis`，避免把出院编码倒用到入院时预测。",
+          "Vital sign features 只使用 prediction time 之前已经 charted/stored 的信息，不能把 discharge-window vitals 用于 24 小时或入院时预测。",
+          "ICU procedure events 来自 procedureevents，适合做时间窗敏感的住院过程特征；discharge-window procedure features 不能用于更早时间点。"
+        ]
+      }
+    },
+    "heart_failure": {
+      "cohort_path": "data/processed/mimic_heart_failure_readmission_cohort.csv",
+      "outputs": {
+        "performance": "outputs/tables/mimic_heart_failure_prediction_time_model_performance.csv",
+        "coefficients": "outputs/tables/mimic_heart_failure_logistic_coefficients.csv",
+        "predictions": "outputs/tables/mimic_heart_failure_test_predictions.csv",
+        "report": "outputs/reports/mimic_heart_failure_prediction_time_model_report.md"
+      },
+      "feature_groups": {
+        "categorical": [
+          "gender",
+          "admission_type",
+          "admission_location",
+          "insurance",
+          "language",
+          "marital_status",
+          "race"
+        ],
+        "admission_safe_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_hf_diagnosis"
+        ],
+        "inhospital_24h_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_hf_diagnosis",
+          "ed_los_hours"
+        ],
+        "discharge_safe_numeric": [
+          "anchor_age",
+          "ed_los_hours",
+          "length_of_stay_days",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_hf_diagnosis",
+          "current_hf_admission",
+          "known_hf_before_or_current_admission"
+        ],
+        "hf_lab24h_numeric": {
+          "prefix": "hflab24h",
+          "names": [
+            "creatinine",
+            "bun",
+            "potassium",
+            "sodium",
+            "bicarbonate",
+            "hemoglobin",
+            "albumin",
+            "ntprobnp",
+            "troponin"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "hf_labdischarge_numeric": {
+          "prefix": "hflabdischarge",
+          "names": [
+            "creatinine",
+            "bun",
+            "potassium",
+            "sodium",
+            "bicarbonate",
+            "hemoglobin",
+            "albumin",
+            "ntprobnp",
+            "troponin"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "vital24h_numeric": {
+          "prefix": "vital24h",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "vitaldischarge_numeric": {
+          "prefix": "vitaldischarge",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "proc24h_numeric": {
+          "prefix": "proc24h",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "procdischarge_numeric": {
+          "prefix": "procdischarge",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "genmed24h_numeric": {
+          "prefix": "genmed24h",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        },
+        "genmeddischarge_numeric": {
+          "prefix": "genmeddischarge",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        }
+      },
+      "specs": [
+        {
+          "feature_set": "admission_safe_minimal",
+          "prediction_time": "admission",
+          "numeric_groups": [
+            "admission_safe_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": []
+        },
+        {
+          "feature_set": "inhospital_24h_lab_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "hf_lab24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "hf_lab24h_numeric",
+            "vital24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_24h.csv",
+            "data/processed/mimic_heart_failure_vital_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_proc_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "hf_lab24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_24h.csv",
+            "data/processed/mimic_heart_failure_vital_features_24h.csv",
+            "data/processed/mimic_heart_failure_procedure_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_proc_genmed_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "hf_lab24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric",
+            "genmed24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_24h.csv",
+            "data/processed/mimic_heart_failure_vital_features_24h.csv",
+            "data/processed/mimic_heart_failure_procedure_features_24h.csv",
+            "data/processed/mimic_heart_failure_general_med_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "hf_labdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "hf_labdischarge_numeric",
+            "vitaldischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_discharge.csv",
+            "data/processed/mimic_heart_failure_vital_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_proc_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "hf_labdischarge_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_discharge.csv",
+            "data/processed/mimic_heart_failure_vital_features_discharge.csv",
+            "data/processed/mimic_heart_failure_procedure_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_proc_genmed_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "hf_labdischarge_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric",
+            "genmeddischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_heart_failure_lab_features_discharge.csv",
+            "data/processed/mimic_heart_failure_vital_features_discharge.csv",
+            "data/processed/mimic_heart_failure_procedure_features_discharge.csv",
+            "data/processed/mimic_heart_failure_general_med_features_discharge.csv"
+          ]
+        }
+      ],
+      "report": {
+        "title": "MIMIC Heart Failure Prediction-Time Model Report",
+        "intro": "这个报告是 ChronoEHR-Agent 的第三个慢病队列 demo：心衰 30 天再入院预测。它比较入院时、入院后 24 小时和出院时三个 prediction time 下的安全特征集。",
+        "feature_descriptions": [
+          "`admission_safe_minimal`：入院时/入院前可知道的变量，包括人口学、入院类型、既往住院史、既往心衰记录。",
+          "`inhospital_24h_lab_minimal`：上面变量 + 入院后 24 小时内可用的常规化验、NT-proBNP 和 troponin。",
+          "`discharge_lab_minimal`：出院前可用的住院过程信息、本次住院心衰诊断标志和入院至出院期间化验摘要。",
+          "`inhospital_24h_lab_vital_minimal`：在心衰 24 小时化验基础上加入 ICU vital signs。",
+          "`discharge_lab_vital_minimal`：在心衰出院前化验基础上加入出院前 ICU vital signs。",
+          "`inhospital_24h_lab_vital_proc_minimal`：在心衰 24 小时化验和 ICU vital signs 基础上加入 ICU procedure events。",
+          "`discharge_lab_vital_proc_minimal`：在心衰出院前化验和 ICU vital signs 基础上加入出院前 ICU procedure events。",
+          "`inhospital_24h_lab_vital_proc_genmed_minimal`: adds broad medication classes observed within the first 24h.",
+          "`discharge_lab_vital_proc_genmed_minimal`: adds broad medication classes observed before discharge."
+        ],
+        "ordered_feature_sets": [
+          "admission_safe_minimal",
+          "inhospital_24h_lab_minimal",
+          "discharge_lab_minimal",
+          "inhospital_24h_lab_vital_minimal",
+          "discharge_lab_vital_minimal",
+          "inhospital_24h_lab_vital_proc_minimal",
+          "discharge_lab_vital_proc_minimal",
+          "inhospital_24h_lab_vital_proc_genmed_minimal",
+          "discharge_lab_vital_proc_genmed_minimal"
+        ],
+        "difference_pairs": [
+          [
+            "admission_safe_minimal",
+            "inhospital_24h_lab_minimal",
+            "24h labs minus admission"
+          ],
+          [
+            "admission_safe_minimal",
+            "discharge_lab_minimal",
+            "discharge labs minus admission"
+          ],
+          [
+            "inhospital_24h_lab_minimal",
+            "inhospital_24h_lab_vital_minimal",
+            "24h vitals added to labs"
+          ],
+          [
+            "discharge_lab_minimal",
+            "discharge_lab_vital_minimal",
+            "discharge vitals added to labs"
+          ],
+          [
+            "inhospital_24h_lab_vital_minimal",
+            "inhospital_24h_lab_vital_proc_minimal",
+            "24h procedures added to labs+vitals"
+          ],
+          [
+            "discharge_lab_vital_minimal",
+            "discharge_lab_vital_proc_minimal",
+            "discharge procedures added to labs+vitals"
+          ],
+          [
+            "inhospital_24h_lab_vital_proc_minimal",
+            "inhospital_24h_lab_vital_proc_genmed_minimal",
+            "24h general medications added to labs+vitals+procedures"
+          ],
+          [
+            "discharge_lab_vital_proc_minimal",
+            "discharge_lab_vital_proc_genmed_minimal",
+            "discharge general medications added to labs+vitals+procedures"
+          ]
+        ],
+        "leakage_notes": [
+          "入院模型没有使用 `length_of_stay_days`、本次住院最终心衰编码、下次入院时间等未来信息。",
+          "24h 模型只使用 `available_time <= min(admittime + 24h, dischtime)` 的化验。",
+          "出院模型只使用 `available_time <= dischtime` 的化验，不能使用出院后的 30 天随访信息。",
+          "心衰队列定义可回顾性使用本次住院诊断码；入院时预测特征里只使用 `prior_hf_diagnosis`。",
+          "Vital sign features 只使用 prediction time 之前已经 charted/stored 的信息，不能把 discharge-window vitals 用于 24 小时或入院时预测。",
+          "ICU procedure events 来自 procedureevents，适合做时间窗敏感的住院过程特征；discharge-window procedure features 不能用于更早时间点。"
+        ]
+      }
+    },
+    "hypertension": {
+      "cohort_path": "data/processed/mimic_hypertension_readmission_cohort.csv",
+      "outputs": {
+        "performance": "outputs/tables/mimic_hypertension_prediction_time_model_performance.csv",
+        "coefficients": "outputs/tables/mimic_hypertension_logistic_coefficients.csv",
+        "predictions": "outputs/tables/mimic_hypertension_test_predictions.csv",
+        "report": "outputs/reports/mimic_hypertension_prediction_time_model_report.md"
+      },
+      "feature_groups": {
+        "categorical": [
+          "gender",
+          "admission_type",
+          "admission_location",
+          "insurance",
+          "language",
+          "marital_status",
+          "race"
+        ],
+        "admission_safe_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_hypertension_diagnosis"
+        ],
+        "inhospital_24h_numeric": [
+          "anchor_age",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_hypertension_diagnosis",
+          "ed_los_hours"
+        ],
+        "discharge_safe_numeric": [
+          "anchor_age",
+          "ed_los_hours",
+          "length_of_stay_days",
+          "prior_admissions_count",
+          "days_since_prior_discharge",
+          "prior_hypertension_diagnosis",
+          "current_hypertension_admission",
+          "known_hypertension_before_or_current_admission"
+        ],
+        "htn_lab24h_numeric": {
+          "prefix": "htnlab24h",
+          "names": [
+            "creatinine",
+            "bun",
+            "potassium",
+            "sodium",
+            "bicarbonate",
+            "hemoglobin",
+            "glucose",
+            "albumin"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "htn_labdischarge_numeric": {
+          "prefix": "htnlabdischarge",
+          "names": [
+            "creatinine",
+            "bun",
+            "potassium",
+            "sodium",
+            "bicarbonate",
+            "hemoglobin",
+            "glucose",
+            "albumin"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "abnormal_count",
+            "has"
+          ]
+        },
+        "vital24h_numeric": {
+          "prefix": "vital24h",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "vitaldischarge_numeric": {
+          "prefix": "vitaldischarge",
+          "names": [
+            "heart_rate",
+            "sbp",
+            "dbp",
+            "mbp",
+            "respiratory_rate",
+            "spo2",
+            "temperature_c"
+          ],
+          "stats": [
+            "count",
+            "mean",
+            "min",
+            "max",
+            "last",
+            "warning_count",
+            "has"
+          ]
+        },
+        "proc24h_numeric": {
+          "prefix": "proc24h",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "procdischarge_numeric": {
+          "prefix": "procdischarge",
+          "names": [
+            "total",
+            "peripheral_lines",
+            "imaging",
+            "invasive_lines",
+            "procedures",
+            "cultures",
+            "ventilation",
+            "intubation_extubation",
+            "communication",
+            "significant_events",
+            "gi_gu",
+            "dialysis",
+            "medications",
+            "other"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "minutes"
+          ]
+        },
+        "genmed24h_numeric": {
+          "prefix": "genmed24h",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        },
+        "genmeddischarge_numeric": {
+          "prefix": "genmeddischarge",
+          "names": [
+            "insulin",
+            "oral_antidiabetic",
+            "loop_diuretic",
+            "thiazide_diuretic",
+            "beta_blocker",
+            "acei_arb",
+            "calcium_channel_blocker",
+            "vasopressor_inotrope",
+            "antibiotic",
+            "anticoagulant",
+            "heparin_flush",
+            "antiplatelet",
+            "statin",
+            "steroid",
+            "opioid",
+            "sedative",
+            "bronchodilator",
+            "ppi_h2blocker",
+            "electrolyte",
+            "iv_fluid",
+            "any_general_med"
+          ],
+          "stats": [
+            "count",
+            "has",
+            "iv_count",
+            "iv_has"
+          ]
+        }
+      },
+      "specs": [
+        {
+          "feature_set": "admission_safe_minimal",
+          "prediction_time": "admission",
+          "numeric_groups": [
+            "admission_safe_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": []
+        },
+        {
+          "feature_set": "inhospital_24h_lab_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "htn_lab24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "htn_lab24h_numeric",
+            "vital24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_24h.csv",
+            "data/processed/mimic_hypertension_vital_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_proc_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "htn_lab24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_24h.csv",
+            "data/processed/mimic_hypertension_vital_features_24h.csv",
+            "data/processed/mimic_hypertension_procedure_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "inhospital_24h_lab_vital_proc_genmed_minimal",
+          "prediction_time": "inhospital_24h",
+          "numeric_groups": [
+            "inhospital_24h_numeric",
+            "htn_lab24h_numeric",
+            "vital24h_numeric",
+            "proc24h_numeric",
+            "genmed24h_numeric"
+          ],
+          "numeric_features": [
+            "ed_los_hours"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_24h.csv",
+            "data/processed/mimic_hypertension_vital_features_24h.csv",
+            "data/processed/mimic_hypertension_procedure_features_24h.csv",
+            "data/processed/mimic_hypertension_general_med_features_24h.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "htn_labdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "htn_labdischarge_numeric",
+            "vitaldischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_discharge.csv",
+            "data/processed/mimic_hypertension_vital_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_proc_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "htn_labdischarge_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_discharge.csv",
+            "data/processed/mimic_hypertension_vital_features_discharge.csv",
+            "data/processed/mimic_hypertension_procedure_features_discharge.csv"
+          ]
+        },
+        {
+          "feature_set": "discharge_lab_vital_proc_genmed_minimal",
+          "prediction_time": "discharge",
+          "numeric_groups": [
+            "discharge_safe_numeric",
+            "htn_labdischarge_numeric",
+            "vitaldischarge_numeric",
+            "procdischarge_numeric",
+            "genmeddischarge_numeric"
+          ],
+          "categorical_groups": [
+            "categorical"
+          ],
+          "extra_feature_files": [
+            "data/processed/mimic_hypertension_lab_features_discharge.csv",
+            "data/processed/mimic_hypertension_vital_features_discharge.csv",
+            "data/processed/mimic_hypertension_procedure_features_discharge.csv",
+            "data/processed/mimic_hypertension_general_med_features_discharge.csv"
+          ]
+        }
+      ],
+      "report": {
+        "title": "MIMIC Hypertension Prediction-Time Model Report",
+        "intro": "这个报告是 ChronoEHR-Agent 的第四个慢病队列 demo：高血压 30 天再入院预测。它比较入院时、入院后 24 小时和出院时三个 prediction time 下的安全特征集。",
+        "feature_descriptions": [
+          "`admission_safe_minimal`：入院时/入院前可知道的变量，包括人口学、入院类型、既往住院史、既往高血压记录。",
+          "`inhospital_24h_lab_minimal`：上面变量 + 入院后 24 小时内可用的常规化验。",
+          "`discharge_lab_minimal`：出院前可用的住院过程信息、本次住院高血压诊断标志和入院至出院期间化验摘要。",
+          "`inhospital_24h_lab_vital_minimal`：在高血压 24 小时化验基础上加入 ICU vital signs。",
+          "`discharge_lab_vital_minimal`：在高血压出院前化验基础上加入出院前 ICU vital signs。",
+          "`inhospital_24h_lab_vital_proc_minimal`：在高血压 24 小时化验和 ICU vital signs 基础上加入 ICU procedure events。",
+          "`discharge_lab_vital_proc_minimal`：在高血压出院前化验和 ICU vital signs 基础上加入出院前 ICU procedure events。",
+          "`inhospital_24h_lab_vital_proc_genmed_minimal`: adds broad medication classes observed within the first 24h.",
+          "`discharge_lab_vital_proc_genmed_minimal`: adds broad medication classes observed before discharge."
+        ],
+        "ordered_feature_sets": [
+          "admission_safe_minimal",
+          "inhospital_24h_lab_minimal",
+          "discharge_lab_minimal",
+          "inhospital_24h_lab_vital_minimal",
+          "discharge_lab_vital_minimal",
+          "inhospital_24h_lab_vital_proc_minimal",
+          "discharge_lab_vital_proc_minimal",
+          "inhospital_24h_lab_vital_proc_genmed_minimal",
+          "discharge_lab_vital_proc_genmed_minimal"
+        ],
+        "difference_pairs": [
+          [
+            "admission_safe_minimal",
+            "inhospital_24h_lab_minimal",
+            "24h labs minus admission"
+          ],
+          [
+            "admission_safe_minimal",
+            "discharge_lab_minimal",
+            "discharge labs minus admission"
+          ],
+          [
+            "inhospital_24h_lab_minimal",
+            "inhospital_24h_lab_vital_minimal",
+            "24h vitals added to labs"
+          ],
+          [
+            "discharge_lab_minimal",
+            "discharge_lab_vital_minimal",
+            "discharge vitals added to labs"
+          ],
+          [
+            "inhospital_24h_lab_vital_minimal",
+            "inhospital_24h_lab_vital_proc_minimal",
+            "24h procedures added to labs+vitals"
+          ],
+          [
+            "discharge_lab_vital_minimal",
+            "discharge_lab_vital_proc_minimal",
+            "discharge procedures added to labs+vitals"
+          ],
+          [
+            "inhospital_24h_lab_vital_proc_minimal",
+            "inhospital_24h_lab_vital_proc_genmed_minimal",
+            "24h general medications added to labs+vitals+procedures"
+          ],
+          [
+            "discharge_lab_vital_proc_minimal",
+            "discharge_lab_vital_proc_genmed_minimal",
+            "discharge general medications added to labs+vitals+procedures"
+          ]
+        ],
+        "leakage_notes": [
+          "入院模型没有使用 `length_of_stay_days`、本次住院最终高血压编码、下次入院时间等未来信息。",
+          "24h 模型只使用 `available_time <= min(admittime + 24h, dischtime)` 的化验。",
+          "出院模型只使用 `available_time <= dischtime` 的化验，不能使用出院后的 30 天随访信息。",
+          "高血压队列定义可回顾性使用本次住院诊断码；入院时预测特征里只使用 `prior_hypertension_diagnosis`。",
+          "Vital sign features 只使用 prediction time 之前已经 charted/stored 的信息，不能把 discharge-window vitals 用于 24 小时或入院时预测。",
+          "ICU procedure events 来自 procedureevents，适合做时间窗敏感的住院过程特征；discharge-window procedure features 不能用于更早时间点。"
+        ]
+      }
+    }
+  }
+}
