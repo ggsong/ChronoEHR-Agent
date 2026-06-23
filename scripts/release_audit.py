@@ -15,6 +15,7 @@ PUBLIC_FILES = [
     "requirements.txt",
     "docs/INSTALL.md",
     "docs/SYNTHETIC_DEMO.md",
+    "docs/RELATED_WORK.md",
     "docs/GITHUB_RELEASE_AUDIT.md",
     "docs/RELEASE_STRUCTURE.md",
 ]

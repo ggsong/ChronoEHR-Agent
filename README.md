@@ -12,6 +12,20 @@ The current private workspace contains completed MIMIC-IV chronic-disease readmi
 - Produces leakage audits, readiness checks, manuscript/report assets, and handoff manifests.
 - Provides a synthetic demo path for CI and external reviewers who do not have clinical data access.
 
+## Positioning
+
+ChronoEHR-Agent is not a simulated clinical diagnosis agent or a patient-interaction benchmark. It is a research workflow agent for temporal structured-EHR prediction studies. Its design is positioned relative to recent medical-agent evaluation and audit work that emphasizes strong conventional baselines, workflow auditability, leakage control, reproducible task execution, and clear safety boundaries.
+
+| Evaluation idea | Current support |
+|---|---|
+| Conventional baselines | Logistic, Random Forest, gradient-boosting, calibration, threshold, and decision-curve summaries |
+| Structured EHR prediction | MIMIC-IV chronic-disease readmission workflows and planned eICU/CHARLS tasks |
+| Leakage and prediction-time governance | Feature-window specs, leakage gates, and prediction-time audits |
+| Agent workflow audit | Self-checks, doctor checks, status cards, runbooks, task queues, and handoff checklists |
+| Reproducibility without controlled data | Config registry, synthetic demo, release audit, and GitHub Actions CI |
+
+See [docs/RELATED_WORK.md](docs/RELATED_WORK.md) for how this project relates to MedAgentBoard, MedAgentAudit-style workflow auditing, MedAgentBench, AgentClinic, MedAgentGym, and related medical-agent frameworks.
+
 ## Quick Start
 
 ```bash
@@ -57,4 +71,4 @@ Ignored local-only directories include `data/`, `outputs/`, `references/`, virtu
 
 This project is a research workflow tool. It is not a clinical decision system and should not be used to guide patient care. Real MIMIC-IV, eICU, CHARLS, or other controlled datasets must be obtained from their official providers and kept out of this repository.
 
-See [docs/INSTALL.md](docs/INSTALL.md), [docs/SYNTHETIC_DEMO.md](docs/SYNTHETIC_DEMO.md), and [docs/GITHUB_RELEASE_AUDIT.md](docs/GITHUB_RELEASE_AUDIT.md).
+See [docs/INSTALL.md](docs/INSTALL.md), [docs/SYNTHETIC_DEMO.md](docs/SYNTHETIC_DEMO.md), [docs/RELATED_WORK.md](docs/RELATED_WORK.md), and [docs/GITHUB_RELEASE_AUDIT.md](docs/GITHUB_RELEASE_AUDIT.md).
