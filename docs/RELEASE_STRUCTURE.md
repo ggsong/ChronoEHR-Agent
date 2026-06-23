@@ -30,4 +30,4 @@ docs/data_inventory.md
 docs/low_quota_handoff.md
 ```
 
-If a mentor needs the completed formal package, send the curated handoff zip from the private workspace rather than committing generated artifacts to GitHub.
+If a reviewer needs the completed formal package, send the curated handoff zip from the private workspace rather than committing generated artifacts to GitHub.

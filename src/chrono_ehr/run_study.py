@@ -346,7 +346,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--external-summary-asset-manifest",
         action="store_true",
-        help="Build the formal external-summary asset manifest for mentor handoff.",
+        help="Build the formal external-summary asset manifest for reviewer handoff.",
     )
     parser.add_argument(
         "--validate-external-summary-asset-manifest",

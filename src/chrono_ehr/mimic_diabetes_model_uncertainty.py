@@ -129,7 +129,7 @@ def write_report(ci: pd.DataFrame, burden: pd.DataFrame, report_path: Path) -> N
 
 ## 解释
 
-固定预警负担表适合向导师解释模型在真实工作流中的含义：如果只关注预测风险最高的一小部分出院患者，能捕获多少 30 天再入院事件，以及这部分人群中的再入院比例是多少。
+固定预警负担表适合向项目评阅者解释模型在真实工作流中的含义：如果只关注预测风险最高的一小部分出院患者，能捕获多少 30 天再入院事件，以及这部分人群中的再入院比例是多少。
 """
     report_path.write_text(text, encoding="utf-8")
 

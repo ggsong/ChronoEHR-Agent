@@ -287,7 +287,7 @@
           "id": "external_summary_asset_manifest",
           "risk_level": "safe",
           "command": "python3 src/chrono_ehr/run_study.py --external-summary-asset-manifest",
-          "description": "Build the formal external-summary asset manifest for mentor handoff."
+          "description": "Build the formal external-summary asset manifest for reviewer handoff."
         },
         {
           "id": "validate_external_summary_asset_manifest",

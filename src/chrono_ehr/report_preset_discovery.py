@@ -163,7 +163,7 @@ def write_report(project_root: Path, presets: pd.DataFrame) -> Path:
 ## Practical Use
 
 - `full_zh` 适合完整材料包：主 Methods/Results draft + 完整 S1-S10 补充附录。
-- `brief_zh` 适合快速发给导师或自己复盘：保留核心结果，减少部分细长补充表。
+- `brief_zh` 适合快速发给项目评阅者或自己复盘：保留核心结果，减少部分细长补充表。
 - `english_brief` 目前的 DOCX preset 仍是 scaffold；但英文 Markdown brief 可以通过 `python3 src/chrono_ehr/run_study.py --english-brief-draft` 生成，供人工审阅和后续英文 DOCX 模板开发。
 - YAML 文件目前是人类可读模板，不直接执行；真正导出请使用 JSON preset。
 """

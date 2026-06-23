@@ -323,7 +323,7 @@ def generate(project: Path) -> str:
     return f"""# MIMIC 糖尿病 30 天再入院预测 Methods/Results 草稿
 
 版本：自动生成草稿 v0.1  
-用途：给导师或自己复盘第一版 ChronoEHR-Agent demo。  
+用途：给项目评阅者或自己复盘第一版 ChronoEHR-Agent demo。
 边界：这是 EHR 数据分析研究草稿，不是医学诊疗建议。
 
 ## 研究目的

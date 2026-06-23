@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a mentor-facing technical summary from external hard metrics."""
+"""Build a reviewer-facing technical summary from external hard metrics."""
 
 from __future__ import annotations
 

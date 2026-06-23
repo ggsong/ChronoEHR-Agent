@@ -262,7 +262,7 @@ def active_focus(last_task: dict[str, Any], tasks: list[dict[str, Any]]) -> dict
                 "python3 src/chrono_ehr/run_study.py --agent-task \"先完善 Agent 控制层，不要做汇报材料\" --agent-task-execute-safe --agent-task-post-run-refresh",
             ),
             "guardrails": [
-                "Do not start report, manuscript, slide, or mentor-update materials unless explicitly requested.",
+                "Do not start report, manuscript, slide, or reviewer-update materials unless explicitly requested.",
                 "Do not train or recalibrate models from this focus alone.",
                 "Do not run expensive raw-table scans from this focus alone.",
                 "Keep work inside local Agent control, validation, state, queue, doctor, freshness, and handoff modules.",

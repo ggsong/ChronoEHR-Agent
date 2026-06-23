@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a formal external-summary asset manifest for mentor handoff."""
+"""Build a formal external-summary asset manifest for reviewer handoff."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ ASSETS = [
     {
         "asset_id": "start_here_external_technical_summary",
         "package_section": "01_start_here",
-        "audience_role": "mentor_entry_point",
+        "audience_role": "reviewer_entry_point",
         "formal_role": "main_summary_table",
         "table_number": "Package T1",
         "path": "outputs/tables/external_technical_summary_table.csv",
@@ -27,7 +27,7 @@ ASSETS = [
     {
         "asset_id": "start_here_external_technical_report",
         "package_section": "01_start_here",
-        "audience_role": "mentor_entry_point",
+        "audience_role": "reviewer_entry_point",
         "formal_role": "summary_report",
         "table_number": "",
         "path": "outputs/reports/external_technical_summary.md",
@@ -38,7 +38,7 @@ ASSETS = [
     {
         "asset_id": "external_benchmark_summary",
         "package_section": "02_main_tables",
-        "audience_role": "mentor_entry_point",
+        "audience_role": "reviewer_entry_point",
         "formal_role": "main_summary_table",
         "table_number": "Package T2",
         "path": "outputs/tables/external_benchmark_summary_table.csv",
@@ -49,7 +49,7 @@ ASSETS = [
     {
         "asset_id": "external_calibration_decision_summary",
         "package_section": "02_main_tables",
-        "audience_role": "mentor_detail",
+        "audience_role": "reviewer_detail",
         "formal_role": "main_summary_table",
         "table_number": "Package T3",
         "path": "outputs/tables/external_calibration_decision_summary.csv",
@@ -60,7 +60,7 @@ ASSETS = [
     {
         "asset_id": "external_model_selection_rationale",
         "package_section": "02_main_tables",
-        "audience_role": "mentor_detail",
+        "audience_role": "reviewer_detail",
         "formal_role": "main_summary_table",
         "table_number": "Package T4",
         "path": "outputs/tables/external_model_selection_rationale.csv",
@@ -71,7 +71,7 @@ ASSETS = [
     {
         "asset_id": "external_subgroup_robustness_summary",
         "package_section": "02_main_tables",
-        "audience_role": "mentor_detail",
+        "audience_role": "reviewer_detail",
         "formal_role": "main_summary_table",
         "table_number": "Package T5",
         "path": "outputs/tables/external_subgroup_robustness_summary.csv",
@@ -82,7 +82,7 @@ ASSETS = [
     {
         "asset_id": "external_threshold_band_sensitivity",
         "package_section": "02_main_tables",
-        "audience_role": "mentor_detail",
+        "audience_role": "reviewer_detail",
         "formal_role": "main_summary_table",
         "table_number": "Package T6",
         "path": "outputs/tables/external_threshold_band_sensitivity.csv",
@@ -93,7 +93,7 @@ ASSETS = [
     {
         "asset_id": "external_calibration_method_rationale",
         "package_section": "02_main_tables",
-        "audience_role": "mentor_detail",
+        "audience_role": "reviewer_detail",
         "formal_role": "main_summary_table",
         "table_number": "Package T7",
         "path": "outputs/tables/external_calibration_method_rationale.csv",
