@@ -21,4 +21,6 @@ jobs:
           python src/chrono_ehr/run_study.py --list
           python src/chrono_ehr/run_study.py --synthetic-demo
           python src/chrono_ehr/run_study.py --validate-synthetic-demo
+          python src/chrono_ehr/run_study.py --agent-demo-trace
+          python src/chrono_ehr/run_study.py --agent-capability-card
           python scripts/release_audit.py --project-root .

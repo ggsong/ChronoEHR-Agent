@@ -735,6 +735,16 @@ def parse_args() -> argparse.Namespace:
         help="Validate no-data synthetic demo artifacts.",
     )
     parser.add_argument(
+        "--agent-demo-trace",
+        action="store_true",
+        help="Run a no-data agent behavior trace for public demo and capability proof.",
+    )
+    parser.add_argument(
+        "--agent-capability-card",
+        action="store_true",
+        help="Generate a capability card from public demo, trace, release, and agent-control artifacts.",
+    )
+    parser.add_argument(
         "--validate-agent-doctor",
         action="store_true",
         help="Validate the Agent doctor health-check bundle and its last local output.",
@@ -954,6 +964,14 @@ def main() -> None:
         return
     if args.validate_synthetic_demo:
         script = args.project_root / "src" / "chrono_ehr" / "validate_synthetic_demo.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.agent_demo_trace:
+        script = args.project_root / "src" / "chrono_ehr" / "agent_demo_trace.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.agent_capability_card:
+        script = args.project_root / "src" / "chrono_ehr" / "agent_capability_card.py"
         subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
         return
     if args.list:
