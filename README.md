@@ -40,6 +40,17 @@ python3 src/chrono_ehr/run_study.py --validate-synthetic-demo
 
 The synthetic demo writes small generated artifacts under `outputs/demo/`. These files are intentionally ignored by git.
 
+## Agent Demo Commands
+
+These commands demonstrate the agent-control layer without requiring controlled clinical data:
+
+```bash
+python3 src/chrono_ehr/run_study.py --agent-demo-trace
+python3 src/chrono_ehr/run_study.py --agent-capability-card
+```
+
+`--agent-demo-trace` records a safe planner/executor/auditor/release-guard trace over the synthetic EHR workflow. `--agent-capability-card` summarizes the public demo capabilities, including the unified entrypoint, action catalog, data contract audit, behavior trace, release guard, and CI smoke test.
+
 ## Real Data Setup
 
 Controlled datasets are not included. To run real-data workflows, set local dataset roots in your shell or `.env`:
