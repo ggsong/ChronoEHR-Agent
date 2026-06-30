@@ -1,0 +1,113 @@
+# ChronoEHR-Agent SHARE longitudinal survey extension template.
+# Status: lightweight data-connection proof; requires local SHARE/Harmonized SHARE files.
+
+dataset:
+  name: "share_incident_diabetes"
+  type: "share_longitudinal_survey"
+  root_path: "${SHARE_ROOT}"
+  version: "Harmonized SHARE or SHARE release files"
+  files:
+    harmonized_share: null
+    wave1_2004_2005: null
+    wave2_2006_2007: null
+    wave4_2010_2011: null
+    wave5_2013: null
+    data_dictionary: null
+  id_columns:
+    person_id: "mergeid"
+    household_id: "hhid"
+    country: "country"
+
+cohort_definition:
+  study_name: "SHARE incident diabetes prediction from baseline wave"
+  population: "European adults in SHARE without diabetes at baseline"
+  baseline_wave: 1
+  inclusion_criteria:
+    - "participated in wave 1"
+    - "valid mergeid for longitudinal linkage"
+    - "baseline age is available"
+    - "baseline diabetes status can be determined"
+    - "at least one follow-up wave with diabetes status"
+  exclusion_criteria:
+    - "diabetes present at baseline"
+    - "missing person identifier"
+    - "no follow-up diabetes information"
+
+outcome:
+  name: "incident_diabetes"
+  type: "binary"
+  baseline_wave: 1
+  followup_waves:
+    - 2
+    - 4
+  definitions:
+    self_report_or_medication:
+      enabled: true
+      description: "follow-up ever-had diabetes or diabetes medication"
+
+prediction_times:
+  baseline_wave:
+    name: "wave1_baseline"
+    description: "prediction after wave 1 interview completion"
+    allowed_wave: 1
+  followup_windows:
+    - name: "wave1_to_wave2"
+      outcome_wave: 2
+    - name: "wave1_to_wave4"
+      outcome_wave: 4
+
+feature_sets:
+  demographics_baseline:
+    enabled: true
+    allowed_wave: 1
+    variable_examples:
+      - "age"
+      - "sex"
+      - "education"
+      - "country"
+  lifestyle_baseline:
+    enabled: true
+    allowed_wave: 1
+    variable_examples:
+      - "smoking"
+      - "alcohol"
+  health_status_baseline:
+    enabled: true
+    allowed_wave: 1
+    variable_examples:
+      - "BMI"
+      - "hypertension"
+      - "heart disease"
+      - "stroke"
+      - "lung disease"
+      - "ADL/IADL limitations"
+      - "mobility limitations"
+      - "depression"
+  survey_design_optional:
+    enabled: true
+    allowed_wave: 1
+    variable_examples:
+      - "person-level survey weight"
+
+forbidden_or_high_risk_features:
+  - "any wave 2/4/5/6/7/8 health outcome variable in the baseline model"
+  - "follow-up diabetes diagnosis"
+  - "follow-up diabetes medication"
+  - "follow-up interview status used as an ordinary baseline feature"
+  - "death/loss-to-follow-up indicators used as ordinary baseline features"
+
+models:
+  logistic_regression:
+    enabled: false
+    note: "Optional later step; not required for the lightweight SHARE connection proof."
+  random_forest:
+    enabled: false
+  hist_gradient_boosting:
+    enabled: false
+
+outputs:
+  readiness_report: "outputs/reports/share_data_readiness_report.md"
+  wave_variable_map: "outputs/tables/share_wave_variable_map.csv"
+  cohort_skeleton_csv: "data/processed/share_incident_diabetes_cohort_skeleton.csv"
+  reports:
+    cohort_skeleton: "outputs/reports/share_incident_diabetes_cohort_skeleton.md"
