@@ -20,6 +20,7 @@ ChronoEHR-Agent is not a simulated clinical diagnosis agent or a patient-interac
 |---|---|
 | Conventional baselines | Logistic, Random Forest, gradient-boosting, calibration, threshold, and decision-curve summaries |
 | Structured EHR prediction | MIMIC-IV chronic-disease readmission workflows and planned eICU/CHARLS tasks |
+| Longitudinal survey extension | SHARE and CHARLS wave-based prediction-time scaffolds |
 | Leakage and prediction-time governance | Feature-window specs, leakage gates, and prediction-time audits |
 | Agent workflow audit | Self-checks, doctor checks, status cards, runbooks, task queues, and handoff checklists |
 | Reproducibility without controlled data | Config registry, synthetic demo, release audit, and GitHub Actions CI |
@@ -59,6 +60,7 @@ Controlled datasets are not included. To run real-data workflows, set local data
 export MIMIC_IV_ROOT=/path/to/mimic-iv-3.1
 export EICU_ROOT=/path/to/eicu-2.0
 export CHARLS_ROOT=/path/to/CHARLS
+export SHARE_ROOT=/path/to/SHARE
 ```
 
 Then run data-specific checks such as:
@@ -66,6 +68,16 @@ Then run data-specific checks such as:
 ```bash
 python3 src/chrono_ehr/run_study.py --agent-doctor
 python3 src/chrono_ehr/run_study.py --study mimic_iv_3_1_diabetes_readmission --no-expensive
+```
+
+For SHARE, the lightweight connection proof does not train a model. It checks local data readiness, maps harmonized wave variables, builds an incident-diabetes cohort skeleton, and validates leakage boundaries:
+
+```bash
+python3 src/chrono_ehr/run_study.py --share-readiness
+python3 src/chrono_ehr/run_study.py --share-wave-map
+python3 src/chrono_ehr/run_study.py --validate-share-wave-map
+python3 src/chrono_ehr/run_study.py --share-incident-diabetes-cohort
+python3 src/chrono_ehr/run_study.py --validate-share-incident-diabetes-cohort
 ```
 
 ## Repository Layout
@@ -80,6 +92,6 @@ Ignored local-only directories include `data/`, `outputs/`, `references/`, virtu
 
 ## Publication Boundary
 
-This project is a research workflow tool. It is not a clinical decision system and should not be used to guide patient care. Real MIMIC-IV, eICU, CHARLS, or other controlled datasets must be obtained from their official providers and kept out of this repository.
+This project is a research workflow tool. It is not a clinical decision system and should not be used to guide patient care. Real MIMIC-IV, eICU, CHARLS, SHARE, or other controlled datasets must be obtained from their official providers and kept out of this repository.
 
 See [docs/INSTALL.md](docs/INSTALL.md), [docs/SYNTHETIC_DEMO.md](docs/SYNTHETIC_DEMO.md), [docs/RELATED_WORK.md](docs/RELATED_WORK.md), and [docs/GITHUB_RELEASE_AUDIT.md](docs/GITHUB_RELEASE_AUDIT.md).

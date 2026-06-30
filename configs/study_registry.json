@@ -73,6 +73,19 @@
       "feature_time_map": "docs/charls_wave_map_template.csv",
       "readiness_command": "python3 src/chrono_ehr/run_study.py --charls-readiness",
       "next_step": "download approved CHARLS waves, then rerun readiness and build wave variable map"
+    },
+    {
+      "id": "share_incident_diabetes",
+      "status": "data_connection_ready",
+      "config": "configs/share_incident_diabetes_template.yaml",
+      "dataset_root": "${SHARE_ROOT}",
+      "cohort": "baseline_without_diabetes",
+      "prediction_time": "share_wave1_baseline",
+      "outcome": "incident_diabetes_wave2_or_wave4",
+      "protocol": "docs/share_incident_diabetes_protocol.md",
+      "feature_time_map": "outputs/tables/share_wave_variable_map.csv",
+      "readiness_command": "python3 src/chrono_ehr/run_study.py --share-readiness",
+      "next_step": "run SHARE wave variable map, cohort skeleton, and validations; model training is optional later"
     }
   ]
 }

@@ -289,6 +289,31 @@ def parse_args() -> argparse.Namespace:
         help="Validate CHARLS incident diabetes probability recalibration outputs.",
     )
     parser.add_argument(
+        "--share-readiness",
+        action="store_true",
+        help="Audit local SHARE/Harmonized SHARE readiness for longitudinal survey tasks.",
+    )
+    parser.add_argument(
+        "--share-wave-map",
+        action="store_true",
+        help="Build the SHARE harmonized wave-variable map for incident diabetes.",
+    )
+    parser.add_argument(
+        "--validate-share-wave-map",
+        action="store_true",
+        help="Validate the SHARE wave-variable map and leakage roles.",
+    )
+    parser.add_argument(
+        "--share-incident-diabetes-cohort",
+        action="store_true",
+        help="Build the SHARE wave 1 to wave 2/wave 4 incident diabetes cohort skeleton.",
+    )
+    parser.add_argument(
+        "--validate-share-incident-diabetes-cohort",
+        action="store_true",
+        help="Validate the SHARE incident diabetes cohort skeleton.",
+    )
+    parser.add_argument(
         "--external-readiness-summary",
         action="store_true",
         help="Summarize CDSL, eICU, and CHARLS external benchmark readiness.",
@@ -1190,6 +1215,26 @@ def main() -> None:
         return
     if args.validate_charls_probability_recalibration:
         script = args.project_root / "src" / "chrono_ehr" / "validate_charls_probability_recalibration.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.share_readiness:
+        script = args.project_root / "src" / "chrono_ehr" / "share_data_readiness.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.share_wave_map:
+        script = args.project_root / "src" / "chrono_ehr" / "share_wave_variable_map.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.validate_share_wave_map:
+        script = args.project_root / "src" / "chrono_ehr" / "validate_share_wave_variable_map.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.share_incident_diabetes_cohort:
+        script = args.project_root / "src" / "chrono_ehr" / "share_incident_diabetes_cohort.py"
+        subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
+        return
+    if args.validate_share_incident_diabetes_cohort:
+        script = args.project_root / "src" / "chrono_ehr" / "validate_share_incident_diabetes_cohort.py"
         subprocess.run([sys.executable, str(script), "--project-root", str(args.project_root)], cwd=args.project_root, check=True)
         return
     if args.external_readiness_summary:

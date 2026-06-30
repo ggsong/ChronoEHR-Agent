@@ -37,6 +37,8 @@ outcome:
   name: "incident_diabetes"
   type: "binary"
   baseline_wave: 1
+  primary_followup_wave: 2
+  secondary_followup_wave: 4
   followup_waves:
     - 2
     - 4
@@ -104,6 +106,30 @@ models:
     enabled: false
   hist_gradient_boosting:
     enabled: false
+
+metrics:
+  required:
+    - "AUROC"
+    - "AUPRC"
+    - "Brier_score"
+    - "calibration"
+    - "event_rate"
+  sensitivity:
+    - "wave2_vs_wave4_followup"
+    - "complete_case_vs_missing_indicator"
+    - "with_vs_without_survey_weights"
+
+split_strategy:
+  method: "person_level_split"
+  group_column: "person_id"
+  train_size: 0.70
+  validation_size: 0.15
+  test_size: 0.15
+  random_seed: 20260630
+  leakage_checks:
+    check_person_overlap: true
+    check_future_wave_features: true
+    check_outcome_proxy_features: true
 
 outputs:
   readiness_report: "outputs/reports/share_data_readiness_report.md"
