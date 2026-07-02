@@ -39,3 +39,5 @@ ChronoEHR-Agent does not claim to be:
 Medical-agent projects can look impressive while hiding weak baselines, unclear prediction times, data leakage, or irreproducible execution. ChronoEHR-Agent focuses on the less flashy but important layer around EHR prediction experiments: keeping the research workflow explicit, auditable, and safe to hand off.
 
 This makes the project complementary to medical-agent benchmarks. Benchmarks evaluate what agents can do; ChronoEHR-Agent organizes how one specific class of medical AI research workflow is specified, checked, run, and delivered.
+
+For a learning-plan-level mapping from medical-agent concepts to concrete project artifacts, see [AGENT_DEVELOPMENT_ALIGNMENT.md](AGENT_DEVELOPMENT_ALIGNMENT.md). For a more compact benchmark comparison table, see [BENCHMARK_POSITIONING_MATRIX.md](BENCHMARK_POSITIONING_MATRIX.md).

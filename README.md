@@ -25,7 +25,7 @@ ChronoEHR-Agent is not a simulated clinical diagnosis agent or a patient-interac
 | Agent workflow audit | Self-checks, doctor checks, status cards, runbooks, task queues, and handoff checklists |
 | Reproducibility without controlled data | Config registry, synthetic demo, release audit, and GitHub Actions CI |
 
-See [docs/RELATED_WORK.md](docs/RELATED_WORK.md) for how this project relates to MedAgentBoard, MedAgentAudit-style workflow auditing, MedAgentBench, AgentClinic, MedAgentGym, and related medical-agent frameworks.
+See [docs/RELATED_WORK.md](docs/RELATED_WORK.md), [docs/AGENT_DEVELOPMENT_ALIGNMENT.md](docs/AGENT_DEVELOPMENT_ALIGNMENT.md), and [docs/BENCHMARK_POSITIONING_MATRIX.md](docs/BENCHMARK_POSITIONING_MATRIX.md) for how this project relates to MedAgentBoard, MedAgentAudit-style workflow auditing, MedAgentBench, AgentClinic, MedAgentGym, and related medical-agent frameworks.
 
 ## Quick Start
 
@@ -94,4 +94,4 @@ Ignored local-only directories include `data/`, `outputs/`, `references/`, virtu
 
 This project is a research workflow tool. It is not a clinical decision system and should not be used to guide patient care. Real MIMIC-IV, eICU, CHARLS, SHARE, or other controlled datasets must be obtained from their official providers and kept out of this repository.
 
-See [docs/INSTALL.md](docs/INSTALL.md), [docs/SYNTHETIC_DEMO.md](docs/SYNTHETIC_DEMO.md), [docs/RELATED_WORK.md](docs/RELATED_WORK.md), and [docs/GITHUB_RELEASE_AUDIT.md](docs/GITHUB_RELEASE_AUDIT.md).
+See [docs/INSTALL.md](docs/INSTALL.md), [docs/SYNTHETIC_DEMO.md](docs/SYNTHETIC_DEMO.md), [docs/RELATED_WORK.md](docs/RELATED_WORK.md), [docs/AGENT_DEVELOPMENT_ALIGNMENT.md](docs/AGENT_DEVELOPMENT_ALIGNMENT.md), [docs/BENCHMARK_POSITIONING_MATRIX.md](docs/BENCHMARK_POSITIONING_MATRIX.md), and [docs/GITHUB_RELEASE_AUDIT.md](docs/GITHUB_RELEASE_AUDIT.md).
